@@ -14,10 +14,14 @@ public class ModItems {
 
 
     public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", 
-        () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS)));
+        () -> new Item(new Item.Properties()
+        .tab(CreativeModeTab.TAB_TOOLS)
+        .stacksTo(1)
+        ));
     
 
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register
         ITEMS.register(eventBus);
     }
 }
+

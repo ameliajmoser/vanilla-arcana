@@ -29,7 +29,7 @@ displayName="Vanilla Arcana" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/ameliajmoser/vanilla-arcana" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
+logoFile="amethyst_wand.png" #optional
 # A text field displayed in the mod UI
 credits="Agatha Lovelace for helping me learn" #optional
 # A text field displayed in the mod UI
@@ -39,7 +39,7 @@ description='''
 Adds vanilla-style magic, with wands that can be enchanted with a variety of spells.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.examplemod]] #optional
+[[dependencies.vanillaarcana]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified

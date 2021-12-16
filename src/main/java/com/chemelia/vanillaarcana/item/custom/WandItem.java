@@ -8,9 +8,7 @@ public class WandItem extends Item {
     public WandItem(Properties pProperties) {
         super(pProperties);
         
-        
     }
 
     
-
 }

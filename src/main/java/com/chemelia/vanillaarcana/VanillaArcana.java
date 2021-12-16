@@ -32,7 +32,7 @@ public class VanillaArcana
     public VanillaArcana() {
         // Register the setup method for modloading
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModItems.register(eventBus);
+        RegistryHandler.register(eventBus);
         eventBus.addListener(this::setup);
         
         /*

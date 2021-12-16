@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
 
+import com.chemelia.vanillaarcana.enchantments.ModEnchantments;
 import com.chemelia.vanillaarcana.item.ModItems;
 
 // The value here should match an entry in the META-INF/mods.toml file

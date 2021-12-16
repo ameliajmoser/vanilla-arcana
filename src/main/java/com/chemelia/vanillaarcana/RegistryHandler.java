@@ -1,5 +1,6 @@
 package com.chemelia.vanillaarcana;
 
+import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.item.custom.WandItem;
 
 import net.minecraft.world.item.CreativeModeTab;
@@ -24,15 +25,17 @@ public class RegistryHandler {
 
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register
         ITEMS.register(eventBus);
+        ENCHANTMENTS.register(eventBus);
     }
 
 
     //Enchantments
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VanillaArcana.MOD_ID);
+
+    public static final RegistryObject<Enchantment> PYROKINESIS = ENCHANTMENTS.register("pyrokinesis", () -> new PyrokinesisEnchantment());
     
     
-    //i may need to add something to WandItem to make sure it is
-    public static final EnchantmentCategory WAND = EnchantmentCategory.create("wand", (Item item)->item instanceof WandItem);
+    public static final EnchantmentCategory WAND_CATEGORY = EnchantmentCategory.create("wand", null);
 
 
 

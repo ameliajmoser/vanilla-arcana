@@ -1,5 +1,6 @@
 package com.chemelia.vanillaarcana.enchantments;
 
+import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
 
 import net.minecraft.core.BlockPos;
@@ -60,7 +61,6 @@ public void onSwingItem(){
 
 public class PyrokinesisEnchantment extends Enchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":pyrokinesis";
-    public static final EnchantmentCategory TYPE = EnchantmentCategory.create(ID, PyrokinesisEnchantment::canEnchantItem);
 
     @Override
     public int getMaxLevel(){
@@ -82,19 +82,25 @@ public class PyrokinesisEnchantment extends Enchantment {
                     EntityType.SMALL_FIREBALL.spawn(world, null, player, position, 
                         MobSpawnType.TRIGGERED, true, true);
                     break;
+                case 2:
+                    EntityType.FIREBALL.spawn(world, null, player, position,
+                        MobSpawnType.TRIGGERED, true, true);
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     
-    protected PyrokinesisEnchantment(Rarity pRarity, EnchantmentCategory pCategory, EquipmentSlot[] pSlot) {
-        super(pRarity, pCategory, pSlot);
+    public PyrokinesisEnchantment() {
+        super(Rarity.UNCOMMON, RegistryHandler.WAND_CATEGORY, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
         
     }
 
     
-    private static boolean canEnchantItem(Item item){
+    // private static boolean canEnchantItem(Item item){
         
-    }
+    // }
     
 }

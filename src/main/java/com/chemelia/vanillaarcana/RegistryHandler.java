@@ -18,7 +18,7 @@ public class RegistryHandler {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VanillaArcana.MOD_ID);
 
     public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", 
-        () -> new Item(new Item.Properties()
+        () -> new WandItem(new Item.Properties()
         .tab(CreativeModeTab.TAB_TOOLS)
         .stacksTo(1)
         ));
@@ -28,15 +28,8 @@ public class RegistryHandler {
         ENCHANTMENTS.register(eventBus);
     }
 
-
     //Enchantments
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VanillaArcana.MOD_ID);
-
-    public static final RegistryObject<Enchantment> PYROKINESIS = ENCHANTMENTS.register("pyrokinesis", () -> new PyrokinesisEnchantment());
-    
-    
-    public static final EnchantmentCategory WAND_CATEGORY = EnchantmentCategory.create("wand", null);
-
-
-
+    public static final RegistryObject<Enchantment> PYROKINESIS = ENCHANTMENTS.register("pyrokinesis", PyrokinesisEnchantment::new);
+    public static final EnchantmentCategory WAND_CATEGORY = EnchantmentCategory.create("wand", item -> item instanceof WandItem);
 }

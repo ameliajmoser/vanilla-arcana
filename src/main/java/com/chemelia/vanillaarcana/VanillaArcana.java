@@ -1,25 +1,14 @@
 package com.chemelia.vanillaarcana;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.stream.Collectors;
-
-import com.chemelia.vanillaarcana.enchantments.ModEnchantments;
-import com.chemelia.vanillaarcana.item.ModItems;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(VanillaArcana.MOD_ID)
@@ -35,7 +24,7 @@ public class VanillaArcana
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         RegistryHandler.register(eventBus);
         eventBus.addListener(this::setup);
-        
+
         /*
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);

@@ -3,18 +3,16 @@ package com.chemelia.vanillaarcana.enchantments;
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.DragonFireball;
+import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraftforge.common.ForgeConfig.Server;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 ///////////////
 //PYROKINESIS//
@@ -61,36 +59,68 @@ public void onSwingItem(){
 
 public class PyrokinesisEnchantment extends Enchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":pyrokinesis";
+    public static final int spellCost = 14;
 
     @Override
     public int getMaxLevel(){
-        return 5;
+        return 4;
     }
 
-    @Override
-    public void doPostAttack(LivingEntity attacker, Entity target, int enchantmentLevel){
-        //if on a server:
-        if (!attacker.level.isClientSide()){
-            ServerLevel world = (ServerLevel) attacker.level;
-            ServerPlayer player = ((ServerPlayer) attacker);
-            BlockPos position = target.blockPosition();
-
-
-
-            switch(enchantmentLevel){
-                case 1:
-                    EntityType.SMALL_FIREBALL.spawn(world, null, player, position, 
-                        MobSpawnType.TRIGGERED, true, true);
-                    break;
-                case 2:
-                    EntityType.FIREBALL.spawn(world, null, player, position,
-                        MobSpawnType.TRIGGERED, true, true);
-                    break;
-                default:
-                    break;
-            }
+    public boolean handleCast(Level world, Player player, ItemStack stack){
+        if (world.isClientSide()){
+            return false;
         }
+        if (player.totalExperience < PyrokinesisEnchantment.spellCost){
+            return false;
+        }
+
+        int level = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
+        player.giveExperiencePoints(-PyrokinesisEnchantment.spellCost * level);
+        
+        Vec3 look = player.getLookAngle();
+        Vec3 pos = player.getEyePosition().add(look.scale(0.9));
+        Vec3 velocity = look.scale(0.3);
+
+        switch (level){
+            case 0:
+                return false;
+            case 1:
+                SmallFireball blazeFireball = new SmallFireball(world, player, 0,0,0);
+                blazeFireball.setPos(pos.x, pos.y, pos.z);
+                blazeFireball.xPower = velocity.x;
+                blazeFireball.yPower = velocity.y;
+                blazeFireball.zPower = velocity.z;
+                world.addFreshEntity(blazeFireball);
+                player.getCooldowns().addCooldown(stack.getItem(), 20);
+                break;
+            case 2:
+                velocity = look.scale(0.2);
+                //last parameter is explosionpower
+                LargeFireball ghastFireball = new LargeFireball(world, player, 0,0,0, 2);
+                ghastFireball.setPos(pos.x, pos.y, pos.z);
+                ghastFireball.xPower = velocity.x;
+                ghastFireball.yPower = velocity.y;
+                ghastFireball.zPower = velocity.z;
+                world.addFreshEntity(ghastFireball);
+                player.getCooldowns().addCooldown(stack.getItem(), 40);
+                break;
+            case 3:
+                velocity = look.scale(0.2);
+                //last parameter is explosionpower
+                LargeFireball bigFireball = new LargeFireball(world, player, 0,0,0, 6);
+                bigFireball.setPos(pos.x, pos.y, pos.z);
+                bigFireball.xPower = velocity.x;
+                bigFireball.yPower = velocity.y;
+                bigFireball.zPower = velocity.z;
+                world.addFreshEntity(bigFireball);
+                player.getCooldowns().addCooldown(stack.getItem(), 40);
+                break;
+            default:
+                break;
+        }
+        return true;
     }
+
 
     
     public PyrokinesisEnchantment() {

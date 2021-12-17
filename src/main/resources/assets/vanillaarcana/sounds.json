@@ -12,7 +12,7 @@
     "item.wand.sap": {
         "category": "player",
         "subtitle": "subtitles.vanillaarcana.item.wand.sap",
-        "sounds": ["minecraft:portal/trigger"]
+        "sounds": ["minecraft:mob/endermen/portal","minecraft:mob/endermen/portal2"]
     }
 
 }

@@ -3,10 +3,14 @@ package com.chemelia.vanillaarcana;
 import com.chemelia.vanillaarcana.enchantments.AlacrityEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
+import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
+import com.chemelia.vanillaarcana.entity.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.custom.WandItem;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -39,16 +43,27 @@ public class RegistryHandler {
         .stacksTo(1)
         .tab(CreativeModeTab.TAB_TOOLS)));
 
+    //Entities
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, VanillaArcana.MOD_ID);
+
+    public static final EntityType<SyphonSnowball> SYPHON_SNOWBALL= EntityType.Builder
+        .<SyphonSnowball>of(SyphonSnowball::new, MobCategory.MISC)
+        .sized(0.25F, 0.25F)
+        .clientTrackingRange(4)
+        .updateInterval(10)
+        .build(VanillaArcana.MOD_ID + ":syphon_projectile");
+
     
 
     //Enchantments
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VanillaArcana.MOD_ID);
     public static final EnchantmentCategory WAND_CATEGORY = EnchantmentCategory.create("wand", item -> item instanceof WandItem);
 
-    //public static final RegistryObject<Enchantment> ALACRITY = ENCHANTMENTS.register("alacrity", AlacrityEnchantment::new);
+    public static final RegistryObject<Enchantment> ALACRITY = ENCHANTMENTS.register("alacrity", AlacrityEnchantment::new);
     
     public static final RegistryObject<Enchantment> PYROKINESIS = ENCHANTMENTS.register("pyrokinesis", PyrokinesisEnchantment::new);
     public static final RegistryObject<Enchantment> SYPHON = ENCHANTMENTS.register("syphon", SyphonEnchantment::new);
+    public static final RegistryObject<Enchantment> WARP = ENCHANTMENTS.register("warp", WarpEnchantment::new);
     
 
 
@@ -58,6 +73,8 @@ public class RegistryHandler {
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register
         SOUNDS.register(eventBus);
         ITEMS.register(eventBus);
+        ENTITIES.register(eventBus);
         ENCHANTMENTS.register(eventBus);
+        
     }
 }

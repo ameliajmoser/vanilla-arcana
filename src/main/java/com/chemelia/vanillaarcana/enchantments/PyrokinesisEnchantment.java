@@ -3,23 +3,16 @@ package com.chemelia.vanillaarcana.enchantments;
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
 
-import ca.weblite.objc.Client;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfig.Server;
 
 ///////////////
 //PYROKINESIS//
@@ -50,7 +43,7 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
         Vec3 pos = player.getEyePosition().add(look.scale(0.9));
         Vec3 velocity = look.scale(0.3);
 
-        if (player.totalExperience < this.spellCost && !player.isCreative()){
+        if (player.totalExperience < SPELL_COST && !player.isCreative()){
             player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*10);
             world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 1, 0.9F);
             if (world instanceof ServerLevel){
@@ -61,7 +54,7 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
 
         int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
         if (!player.isCreative()){
-            player.giveExperiencePoints(-this.spellCost * spellLevel);
+            player.giveExperiencePoints(-SPELL_COST * spellLevel);
         }
         world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F/spellLevel);
         

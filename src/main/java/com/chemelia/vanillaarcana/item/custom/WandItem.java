@@ -1,9 +1,11 @@
 package com.chemelia.vanillaarcana.item.custom;
 
+
 import com.chemelia.vanillaarcana.RegistryHandler;
+import com.chemelia.vanillaarcana.enchantments.AlacrityEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
-import com.chemelia.vanillaarcana.enchantments.SpellEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
+import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,6 +37,11 @@ public class WandItem extends Item {
         if (!(stack.getItem() instanceof WandItem)){
             return InteractionResultHolder.fail(player.getItemInHand(usedHand));
         }
+
+        AlacrityEnchantment alacrity = (AlacrityEnchantment) RegistryHandler.ALACRITY.get();
+        int alacrityLevel = EnchantmentHelper.getItemEnchantmentLevel(alacrity, stack);
+        //make an array of enchantments and reduce their cooldown?
+
     
         PyrokinesisEnchantment pyrokinesis = (PyrokinesisEnchantment) RegistryHandler.PYROKINESIS.get();
         int pyroLevel = EnchantmentHelper.getItemEnchantmentLevel(pyrokinesis, stack);
@@ -45,6 +52,12 @@ public class WandItem extends Item {
         SyphonEnchantment syphon = (SyphonEnchantment) RegistryHandler.SYPHON.get();
         int syphonLevel = EnchantmentHelper.getItemEnchantmentLevel(syphon, stack);
         if (syphonLevel > 0 && syphon.handleCast(world,player,stack)){
+            return InteractionResultHolder.success(stack);
+        }
+
+        WarpEnchantment warp = (WarpEnchantment) RegistryHandler.WARP.get();
+        int warpLevel = EnchantmentHelper.getItemEnchantmentLevel(warp, stack);
+        if (warpLevel > 0 && warp.handleCast(world,player,stack)){
             return InteractionResultHolder.success(stack);
         }
 

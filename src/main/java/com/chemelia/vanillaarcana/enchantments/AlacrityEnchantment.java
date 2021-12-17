@@ -20,12 +20,6 @@ public class AlacrityEnchantment extends Enchantment {
     }
     
 
-    //access all the other wand enchantments on this item and decrease their cooldownTime
-
-
-    
-    
-
-
+    //access all the other spell enchantments on this item and decrease their cooldownTime
 
 }

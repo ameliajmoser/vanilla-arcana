@@ -2,15 +2,12 @@ package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
-import com.chemelia.vanillaarcana.entity.SyphonSnowball;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -21,12 +18,13 @@ import net.minecraft.world.phys.Vec3;
 //////////
 //I:   Spend XP to shoot a projectile. Gain some if you hit, lose more if you miss.
 
-public class SyphonEnchantment extends SpellEnchantment {
-    public final static int SPELL_COST = 7;
-    private final static int PROJECTILE_SPEED = 2;
+public class WarpEnchantment extends SpellEnchantment {
+    public static int spellCooldown = 3;
+    private final static int SPELL_COST = 5;
+    private final static int PROJECTILE_SPEED = 1;
 
-    public SyphonEnchantment() {
-        super(Rarity.UNCOMMON, 3, SPELL_COST);
+    public WarpEnchantment() {
+        super(Rarity.UNCOMMON, spellCooldown, SPELL_COST);
     }
 
     public static final String ID = VanillaArcana.MOD_ID + ":syphon";
@@ -37,29 +35,6 @@ public class SyphonEnchantment extends SpellEnchantment {
     }
 
     
-
-    
-    //Suck XP out of creatures when they're hit (left click)
-    @Override
-    public void doPostAttack(LivingEntity attacker, Entity target, int spellLevel){
-        if (!attacker.level.isClientSide()){
-            ServerLevel world = (ServerLevel) attacker.level;
-            
-            attacker.level.playSound(null, attacker.blockPosition(), RegistryHandler.SPELL_SAP.get(), SoundSource.PLAYERS, 1, 0.5F);
-
-            if (target instanceof Player){
-                ((Player) target).giveExperiencePoints(-(spellLevel + 1));
-            }
-            for (int i = 0; i< spellLevel; ++i){
-                ExperienceOrb orb = new ExperienceOrb(world, target.position().x, target.position().y + 1, target.position().z, 1);
-                world.addFreshEntity(orb);
-            }
-            
-            
-        }
-        
-        
-    }
 
 
     public boolean handleCast(Level world, Player player, ItemStack stack){
@@ -84,16 +59,16 @@ public class SyphonEnchantment extends SpellEnchantment {
         }
         world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F/spellLevel);
         
-        SyphonSnowball spellBall = new SyphonSnowball(world, player, spellLevel);
-        spellBall.setPos(pos.x, pos.y, pos.z);
-        spellBall.setDeltaMovement(look.scale(PROJECTILE_SPEED));
-        world.addFreshEntity(spellBall);
+        // Snowball snowball = new Snowball(world, player);
+        // snowball.setPos(pos.x, pos.y, pos.z);
+        // snowball.setDeltaMovement(look.scale(PROJECTILE_SPEED));
+        // world.addFreshEntity(snowball);
 
 
-        // ThrownEnderpearl pearl = new ThrownEnderpearl(world, player);
-        // pearl.setPos(pos.x, pos.y, pos.z);
-        // pearl.setDeltaMovement(look.scale(PROJECTILE_SPEED));
-        // world.addFreshEntity(pearl);
+        ThrownEnderpearl pearl = new ThrownEnderpearl(world, player);
+        pearl.setPos(pos.x, pos.y, pos.z);
+        pearl.setDeltaMovement(look.scale(PROJECTILE_SPEED*(spellLevel+1)));
+        world.addFreshEntity(pearl);
 
         //SpectralArrow arrow = new SpectralArrow(world, pos.x, pos.y, pos.z);
         // arrow.setDeltaMovement(look.scale(PROJECTILE_SPEED));
@@ -103,6 +78,7 @@ public class SyphonEnchantment extends SpellEnchantment {
 
         return true;
     }
+
 
     
     

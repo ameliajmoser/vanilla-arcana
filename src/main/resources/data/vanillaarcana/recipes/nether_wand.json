@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "  X",
+        " | ",
+        "|  "
+    ],
+    "key": {
+        "|": {
+            "item": "minecraft:blaze_rod"
+        },
+        "X": {
+            "item":"minecraft:nether_star"
+        }
+    },
+    "result": {
+        "item": "vanillaarcana:nether_wand"
+    }
+}

@@ -3,9 +3,15 @@ package com.chemelia.vanillaarcana.enchantments;
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
 
+import ca.weblite.objc.Client;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +19,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeConfig.Server;
 
 ///////////////
 //PYROKINESIS//
@@ -23,43 +30,12 @@ import net.minecraft.world.phys.Vec3;
 //IV:   Summon blaze
 //V:    Dragon fireball? Fire everywhere
 
-//PSEUDOCODE
-/*
-getSpellXPCost(enchantmentLevel){
-    return enchanmentLevel * 3;
-}
-
-@Override
-public void onSwingItem(){
-    if (player.xp > getSpellXPCost){
-        player.xp.decrease(getSpellXPCost);
-        switch (enchantmentLevel){
-            case 1:
-                EntityType.SMALL_FIREBALL.spawn(location, velocity);
-                break;
-            case 2:
-                spawnGhastFireball(location, velocity);
-                break;
-            case 3:
-                placeBlock(LAVA);
-                break;
-            case 4: 
-                spawnFriendlyBlaze();
-            case 5:
-
-            default:
-                break;
-        }
-    } else {
-        spawnSmokeParticles();
+public class PyrokinesisEnchantment extends SpellEnchantment {
+    public PyrokinesisEnchantment() {
+        super(Rarity.UNCOMMON, 5, 14);
     }
-}
-*/
 
-
-public class PyrokinesisEnchantment extends Enchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":pyrokinesis";
-    public static final int spellCost = 14;
 
     @Override
     public int getMaxLevel(){
@@ -70,18 +46,28 @@ public class PyrokinesisEnchantment extends Enchantment {
         if (world.isClientSide()){
             return false;
         }
-        if (player.totalExperience < PyrokinesisEnchantment.spellCost){
-            return false;
-        }
-
-        int level = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
-        player.giveExperiencePoints(-PyrokinesisEnchantment.spellCost * level);
-        
         Vec3 look = player.getLookAngle();
         Vec3 pos = player.getEyePosition().add(look.scale(0.9));
         Vec3 velocity = look.scale(0.3);
 
-        switch (level){
+        if (player.totalExperience < this.spellCost && !player.isCreative()){
+            player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*10);
+            world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 1, 0.9F);
+            if (world instanceof ServerLevel){
+                ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, player.getEyePosition().x,player.getEyePosition().y,player.getEyePosition().z, 15, 0, 0, 0, 0.1);
+            }
+            return false;
+        }
+
+        int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
+        if (!player.isCreative()){
+            player.giveExperiencePoints(-this.spellCost * spellLevel);
+        }
+        world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F/spellLevel);
+        
+        
+
+        switch (spellLevel){
             case 0:
                 return false;
             case 1:
@@ -91,29 +77,29 @@ public class PyrokinesisEnchantment extends Enchantment {
                 blazeFireball.yPower = velocity.y;
                 blazeFireball.zPower = velocity.z;
                 world.addFreshEntity(blazeFireball);
-                player.getCooldowns().addCooldown(stack.getItem(), 20);
+                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown);
                 break;
             case 2:
                 velocity = look.scale(0.2);
                 //last parameter is explosionpower
-                LargeFireball ghastFireball = new LargeFireball(world, player, 0,0,0, 2);
+                LargeFireball ghastFireball = new LargeFireball(world, player, 0,0,0, 1);
                 ghastFireball.setPos(pos.x, pos.y, pos.z);
                 ghastFireball.xPower = velocity.x;
                 ghastFireball.yPower = velocity.y;
                 ghastFireball.zPower = velocity.z;
                 world.addFreshEntity(ghastFireball);
-                player.getCooldowns().addCooldown(stack.getItem(), 40);
+                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*spellLevel*spellLevel);
                 break;
             case 3:
-                velocity = look.scale(0.2);
+                velocity = look.scale(0.1);
                 //last parameter is explosionpower
-                LargeFireball bigFireball = new LargeFireball(world, player, 0,0,0, 6);
+                LargeFireball bigFireball = new LargeFireball(world, player, 0,0,0, 3);
                 bigFireball.setPos(pos.x, pos.y, pos.z);
                 bigFireball.xPower = velocity.x;
                 bigFireball.yPower = velocity.y;
                 bigFireball.zPower = velocity.z;
                 world.addFreshEntity(bigFireball);
-                player.getCooldowns().addCooldown(stack.getItem(), 40);
+                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*spellLevel*spellLevel);
                 break;
             default:
                 break;
@@ -123,14 +109,6 @@ public class PyrokinesisEnchantment extends Enchantment {
 
 
     
-    public PyrokinesisEnchantment() {
-        super(Rarity.UNCOMMON, RegistryHandler.WAND_CATEGORY, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
-        
-    }
-
     
-    // private static boolean canEnchantItem(Item item){
-        
-    // }
     
 }

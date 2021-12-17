@@ -1,5 +1,12 @@
 {
     "item.vanillaarcana.amethyst_wand": "Amethyst Wand",
+    "item.vanillaarcana.nether_wand": "Nether Wand",
 
-    "enchantment.vanillaarcana.pyrokinesis": "Pyrokinesis"
+    "enchantment.vanillaarcana.pyrokinesis": "Pyrokinesis",
+    "enchantment.vanillaarcana.alacrity": "Alacrity",
+    "enchantment.vanillaarcana.syphon": "Syphon",
+
+    "subtitles.vanillaarcana.item.wand.fail": "Spell failed",
+    "subtitles.vanillaarcana.item.wand.cast": "Spell cast",
+    "subtitles.vanillaarcana.item.wand.sap": "XP drained"
 }

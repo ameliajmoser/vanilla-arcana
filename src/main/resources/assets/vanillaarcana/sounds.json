@@ -1,0 +1,18 @@
+{
+    "item.wand.cast": {
+        "category": "player",
+        "subtitle": "subtitles.vanillaarcana.item.wand.cast",
+        "sounds": ["minecraft:mob/evocation_illager/cast1", "minecraft:mob/evocation_illager/cast2"]
+    }, 
+    "item.wand.fail": {
+        "category": "player",
+        "subtitle": "subtitles.vanillaarcana.item.wand.fail",
+        "sounds": ["minecraft:random/fizz"]
+    },
+    "item.wand.sap": {
+        "category": "player",
+        "subtitle": "subtitles.vanillaarcana.item.wand.sap",
+        "sounds": ["minecraft:portal/trigger"]
+    }
+
+}

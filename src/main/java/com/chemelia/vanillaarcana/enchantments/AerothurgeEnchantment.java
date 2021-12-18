@@ -3,7 +3,9 @@ package com.chemelia.vanillaarcana.enchantments;
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
 
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -70,4 +72,12 @@ public class AerothurgeEnchantment extends SpellEnchantment {
         } else return false;
     }
 
+    @Override
+    public boolean handleClientCast(Level world, LivingEntity user, ItemStack stack) {
+        Vec3 look = user.getLookAngle();
+        Vec3 velocity = look.scale(5);
+        user.setDeltaMovement(velocity);
+
+        return super.handleClientCast(world, user, stack);
+    }
 }

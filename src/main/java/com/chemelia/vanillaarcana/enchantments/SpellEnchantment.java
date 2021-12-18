@@ -38,9 +38,10 @@ public class SpellEnchantment extends Enchantment {
     }
 
     public boolean handleCast(Level world, LivingEntity user, ItemStack stack){
-        if (world.isClientSide()){
-            return false;
+        if (world.isClientSide()) {
+            return this.handleClientCast(world, user, stack);
         }
+
         int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
         Vec3 look = user.getLookAngle();
         Vec3 pos = user.getEyePosition().add(look.scale(0.9));
@@ -62,6 +63,9 @@ public class SpellEnchantment extends Enchantment {
         ((ServerLevel) world).sendParticles(successParticle, pos.x,pos.y,pos.z, 15, 0, 0, 0, 0.5);
         return true;
     }
-    
+
+    public boolean handleClientCast(Level world, LivingEntity user, ItemStack stack) {
+        return false;
+    }
 }
 

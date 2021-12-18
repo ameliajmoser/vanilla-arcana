@@ -18,8 +18,8 @@ import net.minecraft.world.phys.Vec3;
 public class SpellEnchantment extends Enchantment {
     public static int spellCooldown;
     public static int spellCost;
-    public static SimpleParticleType successParticle = ParticleTypes.GLOW_SQUID_INK;
-    public static SimpleParticleType failureParticle = ParticleTypes.GLOW_SQUID_INK;
+    public static SimpleParticleType successParticle = ParticleTypes.GLOW;
+    public static SimpleParticleType failureParticle = ParticleTypes.SMOKE;
 
     public SpellEnchantment(Rarity rarity, int spellCooldown, int spellCost) {
         super(rarity, RegistryHandler.WAND_CATEGORY, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
@@ -37,9 +37,13 @@ public class SpellEnchantment extends Enchantment {
         }      
     }
 
+    public boolean handleClientCast(Level world, LivingEntity user, ItemStack stack){
+        return false;
+    }
+
     public boolean handleCast(Level world, LivingEntity user, ItemStack stack){
         if (world.isClientSide()){
-            return false;
+            return this.handleClientCast(world, user, stack);
         }
         int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
         Vec3 look = user.getLookAngle();
@@ -47,7 +51,7 @@ public class SpellEnchantment extends Enchantment {
 
         if (user instanceof Player){
             Player player = (Player) user;
-            if (player.totalExperience < spellCost && !player.isCreative()){
+            if (player.totalExperience < spellCost*spellLevel && !player.isCreative()){
                 player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*10);
                 world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 1, 0.9F);
                 if (world instanceof ServerLevel){

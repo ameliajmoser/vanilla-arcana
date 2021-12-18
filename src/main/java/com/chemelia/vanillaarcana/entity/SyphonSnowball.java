@@ -31,7 +31,7 @@ public class SyphonSnowball extends Snowball {
     }
 
 
-    public static final int SPELL_COST = SyphonEnchantment.SPELL_COST;
+    public static final int SPELL_COST = SyphonEnchantment.spellCost;
 
 
     public void onHitEntity(EntityHitResult result){

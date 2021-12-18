@@ -19,19 +19,20 @@ import net.minecraft.world.phys.Vec3;
 //I:   Spend XP to shoot a projectile. Gain some if you hit, lose more if you miss.
 
 public class WarpEnchantment extends SpellEnchantment {
-    public static int spellCooldown = 3;
+    private final static int SPELL_COOLDOWN = 3;
     private final static int SPELL_COST = 5;
+    private final static int MAX_LEVEL = 5;
     private final static int PROJECTILE_SPEED = 1;
+    public static final String ID = VanillaArcana.MOD_ID + ":warp";
 
     public WarpEnchantment() {
-        super(Rarity.UNCOMMON, spellCooldown, SPELL_COST);
+        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
-    public static final String ID = VanillaArcana.MOD_ID + ":syphon";
 
     @Override
     public int getMaxLevel(){
-        return 5;
+        return MAX_LEVEL;
     }
 
     
@@ -58,6 +59,7 @@ public class WarpEnchantment extends SpellEnchantment {
             player.giveExperiencePoints(-SPELL_COST * spellLevel);
         }
         world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F/spellLevel);
+        ((ServerLevel) world).sendParticles(ParticleTypes.GLOW_SQUID_INK, pos.x,pos.y,pos.z, 15, 0, 0, 0, 0.5);
         
         // Snowball snowball = new Snowball(world, player);
         // snowball.setPos(pos.x, pos.y, pos.z);

@@ -1,12 +1,11 @@
 package com.chemelia.vanillaarcana.enchantments;
 
-import com.chemelia.vanillaarcana.RegistryHandler;
+
 import com.chemelia.vanillaarcana.VanillaArcana;
 
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
@@ -24,84 +23,57 @@ import net.minecraft.world.phys.Vec3;
 //V:    Dragon fireball? Fire everywhere
 
 public class PyrokinesisEnchantment extends SpellEnchantment {
-    public PyrokinesisEnchantment() {
-        super(Rarity.UNCOMMON, 5, 14);
-    }
-
+    private final static int SPELL_COOLDOWN = 7;
+    private final static int SPELL_COST = 14;
+    private final static int MAX_LEVEL = 4;
     public static final String ID = VanillaArcana.MOD_ID + ":pyrokinesis";
+
+    public PyrokinesisEnchantment() {
+        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
+    }
 
     @Override
     public int getMaxLevel(){
-        return 4;
+        return MAX_LEVEL;
     }
 
-    public boolean handleCast(Level world, Player player, ItemStack stack){
-        if (world.isClientSide()){
-            return false;
-        }
-        Vec3 look = player.getLookAngle();
-        Vec3 pos = player.getEyePosition().add(look.scale(0.9));
-        Vec3 velocity = look.scale(0.3);
+    @Override
+    public boolean handleCast(Level world, LivingEntity user, ItemStack stack){
+        if (super.handleCast(world, user, stack)){
+            int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
+            Vec3 look = user.getLookAngle();
+            Vec3 pos = user.getEyePosition().add(look.scale(0.9));
+            Vec3 velocity = look.scale(0.3);
+            Fireball fireball = new SmallFireball(world, user, 0,0,0);
 
-        if (player.totalExperience < SPELL_COST && !player.isCreative()){
-            player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*10);
-            world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 1, 0.9F);
-            if (world instanceof ServerLevel){
-                ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, player.getEyePosition().x,player.getEyePosition().y,player.getEyePosition().z, 15, 0, 0, 0, 0.1);
-            }
-            return false;
-        }
+            switch (spellLevel){
+                case 0:
+                    return false;
+                case 1:
+                    break;
+                case 2:
+                    velocity = look.scale(0.2);
+                    //last parameter is explosionpower
+                    fireball = new LargeFireball(world, user, 0,0,0, 1);
+                    break;
+                case 3:
+                    velocity = look.scale(0.1);
+                    //last parameter is explosionpower
+                    fireball = new LargeFireball(world, user, 0,0,0, 20);
+                    break;
+                default:
+                    break;  
+                }
+                fireball.setPos(pos.x, pos.y, pos.z);
+                fireball.xPower = velocity.x;
+                fireball.yPower = velocity.y;
+                fireball.zPower = velocity.z; 
+                world.addFreshEntity(fireball);
 
-        int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
-        if (!player.isCreative()){
-            player.giveExperiencePoints(-SPELL_COST * spellLevel);
-        }
-        world.playSound(null, player.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F/spellLevel);
-        
-        
-
-        switch (spellLevel){
-            case 0:
-                return false;
-            case 1:
-                SmallFireball blazeFireball = new SmallFireball(world, player, 0,0,0);
-                blazeFireball.setPos(pos.x, pos.y, pos.z);
-                blazeFireball.xPower = velocity.x;
-                blazeFireball.yPower = velocity.y;
-                blazeFireball.zPower = velocity.z;
-                world.addFreshEntity(blazeFireball);
-                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown);
-                break;
-            case 2:
-                velocity = look.scale(0.2);
-                //last parameter is explosionpower
-                LargeFireball ghastFireball = new LargeFireball(world, player, 0,0,0, 1);
-                ghastFireball.setPos(pos.x, pos.y, pos.z);
-                ghastFireball.xPower = velocity.x;
-                ghastFireball.yPower = velocity.y;
-                ghastFireball.zPower = velocity.z;
-                world.addFreshEntity(ghastFireball);
-                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*spellLevel*spellLevel);
-                break;
-            case 3:
-                velocity = look.scale(0.1);
-                //last parameter is explosionpower
-                LargeFireball bigFireball = new LargeFireball(world, player, 0,0,0, 3);
-                bigFireball.setPos(pos.x, pos.y, pos.z);
-                bigFireball.xPower = velocity.x;
-                bigFireball.yPower = velocity.y;
-                bigFireball.zPower = velocity.z;
-                world.addFreshEntity(bigFireball);
-                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*spellLevel*spellLevel);
-                break;
-            default:
-                break;
-        }
-        return true;
+                if (user instanceof Player){
+                    ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN*spellLevel*spellLevel);
+                }
+            return true;
+        } else return false;
     }
-
-
-    
-    
-    
 }

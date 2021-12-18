@@ -1,6 +1,6 @@
 package com.chemelia.vanillaarcana;
 
-import com.chemelia.vanillaarcana.enchantments.AlacrityEnchantment;
+import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
@@ -59,11 +59,13 @@ public class RegistryHandler {
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VanillaArcana.MOD_ID);
     public static final EnchantmentCategory WAND_CATEGORY = EnchantmentCategory.create("wand", item -> item instanceof WandItem);
 
-    public static final RegistryObject<Enchantment> ALACRITY = ENCHANTMENTS.register("alacrity", AlacrityEnchantment::new);
+    //public static final RegistryObject<Enchantment> ALACRITY = ENCHANTMENTS.register("alacrity", AlacrityEnchantment::new);
     
+    public static final RegistryObject<Enchantment> AEROTHURGE = ENCHANTMENTS.register("aerothurge", AerothurgeEnchantment::new);
     public static final RegistryObject<Enchantment> PYROKINESIS = ENCHANTMENTS.register("pyrokinesis", PyrokinesisEnchantment::new);
     public static final RegistryObject<Enchantment> SYPHON = ENCHANTMENTS.register("syphon", SyphonEnchantment::new);
     public static final RegistryObject<Enchantment> WARP = ENCHANTMENTS.register("warp", WarpEnchantment::new);
+
     
 
 

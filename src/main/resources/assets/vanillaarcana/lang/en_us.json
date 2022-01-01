@@ -6,6 +6,8 @@
     "enchantment.vanillaarcana.pyrokinesis": "Pyrokinesis",
     "enchantment.vanillaarcana.syphon": "Syphon",
     "enchantment.vanillaarcana.warp": "Warp",
+    "enchantment.vanillaarcana.necromancy": "Necromancy",
+    "enchantment.vanillaarcana.frost": "Frost",
 
     "subtitles.vanillaarcana.item.wand.fail": "Spell failed",
     "subtitles.vanillaarcana.item.wand.cast": "Spell cast",

@@ -2,7 +2,7 @@ package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
-import com.chemelia.vanillaarcana.entity.SyphonSnowball;
+import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -64,9 +64,11 @@ public class SyphonEnchantment extends SpellEnchantment {
             spellBall.setPos(pos.x, pos.y, pos.z);
             spellBall.setDeltaMovement(look.scale(PROJECTILE_SPEED));
             world.addFreshEntity(spellBall);
+            
+            if (user instanceof Player) {
+                ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN * spellLevel * spellLevel);
+            }
             return true;
         } else return false;
     }
-
-    
 }

@@ -1,10 +1,14 @@
 package com.chemelia.vanillaarcana;
 
 import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
+import com.chemelia.vanillaarcana.enchantments.FrostEnchantment;
+import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
-import com.chemelia.vanillaarcana.entity.SyphonSnowball;
+import com.chemelia.vanillaarcana.entity.monster.SummonedZombie;
+import com.chemelia.vanillaarcana.entity.projectile.FrostSnowball;
+import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.custom.WandItem;
 
 import net.minecraft.resources.ResourceLocation;
@@ -53,6 +57,20 @@ public class RegistryHandler {
         .updateInterval(10)
         .build(VanillaArcana.MOD_ID + ":syphon_projectile");
 
+    public static final EntityType<FrostSnowball> FROST_SNOWBALL = EntityType.Builder
+        .<FrostSnowball>of(FrostSnowball::new, MobCategory.MISC)
+        .sized(0.25F, 0.25F)
+        .clientTrackingRange(4)
+        .updateInterval(10)
+        .build(VanillaArcana.MOD_ID + ":frost_projectile");
+
+    public static final EntityType<SummonedZombie> SUMMONED_ZOMBIE = EntityType.Builder
+        .<SummonedZombie>of(SummonedZombie::new, MobCategory.MONSTER)
+        .sized(0.6F, 1.95F)
+        .clientTrackingRange(8)
+        .build(VanillaArcana.MOD_ID + ":mixin_zombie");
+        
+
     
 
     //Enchantments
@@ -65,7 +83,8 @@ public class RegistryHandler {
     public static final RegistryObject<Enchantment> PYROKINESIS = ENCHANTMENTS.register("pyrokinesis", PyrokinesisEnchantment::new);
     public static final RegistryObject<Enchantment> SYPHON = ENCHANTMENTS.register("syphon", SyphonEnchantment::new);
     public static final RegistryObject<Enchantment> WARP = ENCHANTMENTS.register("warp", WarpEnchantment::new);
-
+  //  public static final RegistryObject<Enchantment> NECROMANCY = ENCHANTMENTS.register("necromancy", NecromancyEnchantment::new);
+    public static final RegistryObject<Enchantment> FROST = ENCHANTMENTS.register("frost", FrostEnchantment::new);
     
 
 

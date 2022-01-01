@@ -1,12 +1,6 @@
 package com.chemelia.vanillaarcana.item.custom;
 
-
-import com.chemelia.vanillaarcana.RegistryHandler;
-import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
-import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SpellEnchantment;
-import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
-import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;

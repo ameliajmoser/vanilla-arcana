@@ -1,4 +1,4 @@
-package com.chemelia.vanillaarcana.entity;
+package com.chemelia.vanillaarcana.entity.projectile;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;

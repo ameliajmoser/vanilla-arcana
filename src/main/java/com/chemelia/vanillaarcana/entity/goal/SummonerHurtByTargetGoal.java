@@ -2,44 +2,46 @@ package com.chemelia.vanillaarcana.entity.goal;
 
 import java.util.EnumSet;
 
-import com.chemelia.vanillaarcana.entity.monster.SummonedMonster;
+import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.monster.Monster;
 
 public class SummonerHurtByTargetGoal extends TargetGoal {
-    private final SummonedMonster summonedMonster;
-    private LivingEntity summonerLastHurtBy;
+    private LivingEntity owner;
+    private LivingEntity ownerLastHurtBy;
     private int timestamp;
 
-    public SummonerHurtByTargetGoal(SummonedMonster monster) {
+    public SummonerHurtByTargetGoal(Monster monster) {
         super(monster, false);
-        this.summonedMonster = monster;
+        if (monster instanceof TamedZombie){
+            owner = ((TamedZombie)monster).getOwner();
+        }
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     }
 
 
     @Override
     public boolean canUse() {
-        LivingEntity summoner = (LivingEntity) this.summonedMonster.getOwner();
-        if (summoner == null) {
+        if (owner == null) {
             return false;
         } else {
-            this.summonerLastHurtBy = summoner.getLastHurtByMob();
-            int time = summoner.getLastHurtByMobTimestamp();
-            return time != this.timestamp && this.canAttack(this.summonerLastHurtBy, TargetingConditions.DEFAULT) && this.summonedMonster.wantsToAttack(this.summonerLastHurtBy, summoner);
+            this.ownerLastHurtBy = owner.getLastHurtByMob();
+            int time = owner.getLastHurtByMobTimestamp();
+            return time != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT);
         }
     }
 
     public void start(){
-        this.mob.setTarget(this.summonerLastHurtBy);
-        LivingEntity summoner = (LivingEntity) this.summonedMonster.getOwner();
-        if (summoner != null){
-            this.timestamp = summoner.getLastHurtByMobTimestamp();
+        this.mob.setTarget(this.ownerLastHurtBy);
+        if (owner != null){
+            this.timestamp = owner.getLastHurtByMobTimestamp();
         }
         super.start();
     }
+
     
 }

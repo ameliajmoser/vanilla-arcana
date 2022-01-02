@@ -1,8 +1,7 @@
 package com.chemelia.vanillaarcana.entity.goal;
 
 import java.util.EnumSet;
-
-import com.chemelia.vanillaarcana.entity.monster.SummonedMonster;
+import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +9,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,8 +21,8 @@ public class FollowSummonerGoal extends Goal {
    private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
    private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
    private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
-   private final SummonedMonster monster;
-   private LivingEntity summoner;
+   private final Monster monster;
+   private LivingEntity owner;
    private final LevelReader level;
    private final double speedModifier;
    private final PathNavigation navigation;
@@ -31,9 +31,8 @@ public class FollowSummonerGoal extends Goal {
    private final float startDistance;
    private float oldWaterCost;
    private final boolean canFly;
-
-
-   public FollowSummonerGoal(SummonedMonster monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
+   
+   public FollowSummonerGoal(Monster monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
        this.monster = monster;
        this.level = monster.getLevel();
        this.speedModifier = speedModifier;
@@ -41,6 +40,10 @@ public class FollowSummonerGoal extends Goal {
        this.startDistance = startDistance;
        this.stopDistance = stopDistance;
        this.canFly = canFly;
+
+       if (monster instanceof TamedZombie){
+          owner = ((TamedZombie) monster).getOwner();
+       }
 
        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
       if (!(monster.getNavigation() instanceof GroundPathNavigation) && !(monster.getNavigation() instanceof FlyingPathNavigation)) {
@@ -53,15 +56,13 @@ public class FollowSummonerGoal extends Goal {
     * method as well.
     */
     public boolean canUse() {
-        LivingEntity summonerEntity = (LivingEntity) this.monster.getOwner();
-        if (summonerEntity == null) {
+        if (owner == null) {
            return false;
-        } else if (summonerEntity.isSpectator()) {
+        } else if (owner.isSpectator()) {
            return false;
-        } else if (this.monster.distanceToSqr(summonerEntity) < (double)(this.startDistance * this.startDistance)) {
+        } else if (this.monster.distanceToSqr(owner) < (double)(this.startDistance * this.startDistance)) {
            return false;
         } else {
-           this.summoner = summonerEntity;
            return true;
         }
     }
@@ -73,7 +74,7 @@ public class FollowSummonerGoal extends Goal {
     if (this.navigation.isDone()) {
        return false;
     } else {
-       return !(this.monster.distanceToSqr(this.summoner) <= (double)(this.stopDistance * this.stopDistance));
+       return !(this.monster.distanceToSqr(this.owner) <= (double)(this.stopDistance * this.stopDistance));
     }
  }
 
@@ -90,7 +91,7 @@ public class FollowSummonerGoal extends Goal {
       * Reset the task's internal state. Called when this task is interrupted by another one
       */
      public void stop() {
-        this.summoner = null;
+        this.owner = null;
         this.navigation.stop();
         this.monster.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
      }
@@ -99,14 +100,14 @@ public class FollowSummonerGoal extends Goal {
       * Keep ticking a continuous task that has already been started
       */
      public void tick() {
-        this.monster.getLookControl().setLookAt(this.summoner, 10.0F, (float)this.monster.getMaxHeadXRot());
+        this.monster.getLookControl().setLookAt(this.owner, 10.0F, (float)this.monster.getMaxHeadXRot());
         if (--this.timeToRecalcPath <= 0) {
            this.timeToRecalcPath = this.adjustedTickDelay(10);
            if (!this.monster.isLeashed() && !this.monster.isPassenger()) {
-              if (this.monster.distanceToSqr(this.summoner) >= 144.0D) {
+              if (this.monster.distanceToSqr(this.owner) >= 144.0D) {
                  this.teleportToOwner();
               } else {
-                 this.navigation.moveTo(this.summoner, this.speedModifier);
+                 this.navigation.moveTo(this.owner, this.speedModifier);
               }
   
            }
@@ -114,7 +115,7 @@ public class FollowSummonerGoal extends Goal {
      }
   
      private void teleportToOwner() {
-        BlockPos blockpos = this.summoner.blockPosition();
+        BlockPos blockpos = this.owner.blockPosition();
   
         for(int i = 0; i < 10; ++i) {
            int j = this.randomIntInclusive(-3, 3);
@@ -129,7 +130,7 @@ public class FollowSummonerGoal extends Goal {
      }
   
      private boolean maybeTeleportTo(int pX, int pY, int pZ) {
-        if (Math.abs((double)pX - this.summoner.getX()) < 2.0D && Math.abs((double)pZ - this.summoner.getZ()) < 2.0D) {
+        if (Math.abs((double)pX - this.owner.getX()) < 2.0D && Math.abs((double)pZ - this.owner.getZ()) < 2.0D) {
            return false;
         } else if (!this.canTeleportTo(new BlockPos(pX, pY, pZ))) {
            return false;

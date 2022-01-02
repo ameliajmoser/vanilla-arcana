@@ -2,10 +2,11 @@ package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
-import com.chemelia.vanillaarcana.entity.monster.SummonedZombie;
+import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Skeleton;
@@ -42,17 +43,17 @@ public class NecromancyEnchantment extends SpellEnchantment {
                     switch (spellLevel) {
                         case 3:
                             if (target instanceof WitherSkeleton) {
-                                mob.convertTo(RegistryHandler.SUMMONED_ZOMBIE, true);
+                                mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                             }
                             break;
                         case 2:
                             if (target instanceof Skeleton) {
-                                mob.convertTo(RegistryHandler.SUMMONED_ZOMBIE, true);
+                                mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                             }
                             break;
                         case 1:
                             if (target instanceof Zombie) {
-                                mob.convertTo(RegistryHandler.SUMMONED_ZOMBIE, true);
+                                mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                             }
                             break;
                         default:
@@ -77,10 +78,11 @@ public class NecromancyEnchantment extends SpellEnchantment {
 
             switch (spellLevel){
                 case 1:
-                    Zombie zombie = new Zombie(EntityType.ZOMBIE, world);
-                    //zombie.setOwnerUUID(user.getUUID());
+                //TODO: Find out how to create an attribute supplier for this TAMED_ZOMBIE type
+                    TamedZombie zombie = new TamedZombie(RegistryHandler.TAMED_ZOMBIE.get(), world, user);
                     zombie.setPos(pos);
                     world.addFreshEntity(zombie);
+                    zombie.addEffect(new MobEffectInstance(MobEffects.WITHER, 9999, 0));
                     break;
                 case 2:
                     break;

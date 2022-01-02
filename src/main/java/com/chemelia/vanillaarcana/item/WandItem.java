@@ -1,4 +1,4 @@
-package com.chemelia.vanillaarcana.item.custom;
+package com.chemelia.vanillaarcana.item;
 
 import com.chemelia.vanillaarcana.enchantments.SpellEnchantment;
 

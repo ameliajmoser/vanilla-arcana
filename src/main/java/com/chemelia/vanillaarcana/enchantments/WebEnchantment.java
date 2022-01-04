@@ -1,7 +1,6 @@
 package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.VanillaArcana;
-import com.chemelia.vanillaarcana.entity.projectile.FrostSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,19 +13,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 ///////////
-// FROST //
+//  WEB  //
 ///////////
 //I:   Snowball projectile that applies powdered snow frost effect.
 
-public class FrostEnchantment extends SpellEnchantment {
+public class WebEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 10;
     private final static int SPELL_COST = 10;
     private final static int MAX_LEVEL = 5;
     private final static int PROJECTILE_SPEED = 1;
-    public static final String ID = VanillaArcana.MOD_ID + ":frost";
+    public static final String ID = VanillaArcana.MOD_ID + ":web";
 
-    public FrostEnchantment() {
-        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
+    public WebEnchantment() {
+        super(Rarity.COMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
     @Override
@@ -43,10 +42,10 @@ public class FrostEnchantment extends SpellEnchantment {
             Vec3 look = user.getLookAngle();
             Vec3 pos = user.getEyePosition().add(look.scale(0.9));
 
-            FrostSnowball frostBall = new FrostSnowball(world, user, spellLevel);
-            frostBall.setPos(pos.x, pos.y, pos.z);
-            frostBall.setDeltaMovement(look.scale(PROJECTILE_SPEED));
-            world.addFreshEntity(frostBall);
+            WebSnowball webBall = new WebSnowball(world, user, spellLevel);
+            webBall.setPos(pos.x, pos.y, pos.z);
+            webBall.setDeltaMovement(look.scale(PROJECTILE_SPEED));
+            world.addFreshEntity(webBall);
         
             if (user instanceof Player) {
                 ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN * spellLevel * spellLevel);

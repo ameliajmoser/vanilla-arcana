@@ -3,14 +3,16 @@
     "item.vanillaarcana.nether_wand": "Nether Wand",
     "item.vanillaarcana.aegis_block": "Aegis Block",
     
-    "block.vanillaarcana.aegis_block": "AegisBlock",
+    "block.vanillaarcana.aegis_block": "Aegis Block",
 
+    "enchantment.vanillaarcana.aegis": "Aegis",
     "enchantment.vanillaarcana.aerothurge": "Aerothurge",
     "enchantment.vanillaarcana.pyrokinesis": "Pyrokinesis",
     "enchantment.vanillaarcana.syphon": "Syphon",
     "enchantment.vanillaarcana.warp": "Warp",
     "enchantment.vanillaarcana.necromancy": "Necromancy",
     "enchantment.vanillaarcana.frost": "Frost",
+    "enchantment.vanillaarcana.web": "Web",
 
     "subtitles.vanillaarcana.item.wand.fail": "Spell failed",
     "subtitles.vanillaarcana.item.wand.cast": "Spell cast",

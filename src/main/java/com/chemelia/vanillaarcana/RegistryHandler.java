@@ -1,14 +1,16 @@
 package com.chemelia.vanillaarcana;
 
+import com.chemelia.vanillaarcana.block.AegisBlock;
 import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
 import com.chemelia.vanillaarcana.enchantments.FrostEnchantment;
+import com.chemelia.vanillaarcana.enchantments.WebEnchantment;
 import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
-import com.chemelia.vanillaarcana.entity.projectile.FrostSnowball;
+import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.WandItem;
 import com.google.common.base.Supplier;
@@ -56,7 +58,7 @@ public class RegistryHandler {
     
     private static <T extends Block>RegistryObject<T> registerBlock(String name, Supplier<T> block){
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn);
+        //registerBlockItem(name, toReturn);
         return toReturn;
     }
     
@@ -65,11 +67,12 @@ public class RegistryHandler {
                 new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     }
 
-    public static final RegistryObject<Block> AEGIS_BLOCK = registerBlock("aegis_block", ()-> new Block(BlockBehaviour.Properties
+    public static final RegistryObject<Block> AEGIS_BLOCK = registerBlock("aegis_block", ()-> new AegisBlock(BlockBehaviour.Properties
         .of(Material.GLASS)
         .strength(15F, 0.1F)
         .sound(SoundType.GLASS)
-        .noOcclusion()));
+        .noOcclusion()
+        .noDrops()));
 
     //Items
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VanillaArcana.MOD_ID);
@@ -91,8 +94,8 @@ public class RegistryHandler {
         .updateInterval(10)
         .build(VanillaArcana.MOD_ID + ":syphon_projectile");
 
-    public static final EntityType<FrostSnowball> FROST_SNOWBALL = EntityType.Builder
-        .<FrostSnowball>of(FrostSnowball::new, MobCategory.MISC)
+    public static final EntityType<WebSnowball> FROST_SNOWBALL = EntityType.Builder
+        .<WebSnowball>of(WebSnowball::new, MobCategory.MISC)
         .sized(0.25F, 0.25F)
         .clientTrackingRange(4)
         .updateInterval(10)
@@ -129,6 +132,7 @@ public class RegistryHandler {
     public static final RegistryObject<Enchantment> WARP = ENCHANTMENTS.register("warp", WarpEnchantment::new);
     public static final RegistryObject<Enchantment> NECROMANCY = ENCHANTMENTS.register("necromancy", NecromancyEnchantment::new);
     public static final RegistryObject<Enchantment> FROST = ENCHANTMENTS.register("frost", FrostEnchantment::new);
+    public static final RegistryObject<Enchantment> WEB = ENCHANTMENTS.register("web", WebEnchantment::new);
     
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register
         SOUNDS.register(eventBus);
@@ -136,6 +140,5 @@ public class RegistryHandler {
         ITEMS.register(eventBus);
         ENTITIES.register(eventBus);
         ENCHANTMENTS.register(eventBus);
-        
     }
 }

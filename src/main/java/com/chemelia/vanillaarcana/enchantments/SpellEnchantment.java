@@ -14,7 +14,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class SpellEnchantment extends Enchantment {
+public abstract class SpellEnchantment extends Enchantment {
     public static int spellCooldown;
     public static int spellCost;
 

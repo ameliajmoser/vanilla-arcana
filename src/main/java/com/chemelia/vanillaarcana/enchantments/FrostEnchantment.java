@@ -2,7 +2,6 @@ package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.VanillaArcana;
 import com.chemelia.vanillaarcana.entity.projectile.FrostSnowball;
-import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -60,5 +59,4 @@ public class FrostEnchantment extends SpellEnchantment {
     protected void spawnSuccessParticle(Level world, Vec3 pos) {
         ((ServerLevel) world).sendParticles(ParticleTypes.SNOWFLAKE, pos.x, pos.y, pos.z, 10, 0, 0, 0, 0.1);
     }
-
 }

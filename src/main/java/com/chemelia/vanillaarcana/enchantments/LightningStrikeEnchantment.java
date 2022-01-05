@@ -3,35 +3,32 @@ package com.chemelia.vanillaarcana.enchantments;
 import com.chemelia.vanillaarcana.VanillaArcana;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+/////////////
+//LIGHTNING//
+/////////////
+//Shoot a projectile that creates a lightning strike, or create a lightning strike at the block you're looking at?
 
-//////////
-// WARP //
-//////////
-//I:   Teleport using XP!
-
-public class WarpEnchantment extends SpellEnchantment {
+public class LightningStrikeEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 3;
-    private final static int SPELL_COST = 15;
+    private final static int SPELL_COST = 5;
     private final static int MAX_LEVEL = 5;
     private final static int PROJECTILE_SPEED = 1;
-    public static final String ID = VanillaArcana.MOD_ID + ":warp";
+    public static final String ID = VanillaArcana.MOD_ID + ":syphon";
 
-    public WarpEnchantment() {
+    public LightningStrikeEnchantment() {
         super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
     }
-
 
     @Override
     public int getMaxLevel(){
         return MAX_LEVEL;
     }
 
-    
+
     @Override
     public boolean handleCast(Level world, LivingEntity user, ItemStack stack){
         if (super.handleCast(world, user, stack)){
@@ -39,14 +36,9 @@ public class WarpEnchantment extends SpellEnchantment {
             Vec3 look = user.getLookAngle();
             Vec3 pos = user.getEyePosition().add(look.scale(0.9));
 
-
-            ThrownEnderpearl pearl = new ThrownEnderpearl(world, user);
-            pearl.setPos(pos.x, pos.y, pos.z);
-            pearl.setDeltaMovement(look.scale(PROJECTILE_SPEED*(spellLevel+1)));
-            world.addFreshEntity(pearl);
-            
             return true;
         } else return false;
-    }   
+    }
+
     
 }

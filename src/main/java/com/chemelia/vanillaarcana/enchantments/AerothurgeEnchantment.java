@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class AerothurgeEnchantment extends SpellEnchantment {
-    private final static int SPELL_COOLDOWN = 7;
+    private final static int SPELL_COOLDOWN = 20;
     private final static int SPELL_COST = 14;
     private final static int MAX_LEVEL = 4;
     public static final String ID = VanillaArcana.MOD_ID + ":aerothurge";
@@ -44,7 +44,7 @@ public class AerothurgeEnchantment extends SpellEnchantment {
                 return false;
             } 
         }
-        user.setDeltaMovement(look.scale(1.1 * spellLevel));
+        user.setDeltaMovement(look.scale(0.8 + 0.3*spellLevel));
         return true;  
     }
 
@@ -55,10 +55,9 @@ public class AerothurgeEnchantment extends SpellEnchantment {
             int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);            
             
             if (user instanceof Player){
-                ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN*spellLevel*spellLevel);
+                ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN/spellLevel);
             }
             return true;
         } else return false;
     }
-
 }

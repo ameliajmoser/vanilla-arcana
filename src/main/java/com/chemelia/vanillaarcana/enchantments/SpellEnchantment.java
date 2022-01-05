@@ -63,10 +63,10 @@ public abstract class SpellEnchantment extends Enchantment {
     }
     
     protected void spawnSuccessParticle(Level world, Vec3 pos){
-        ((ServerLevel) world).sendParticles(ParticleTypes.GLOW, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.5);
+        ((ServerLevel) world).sendParticles(ParticleTypes.GLOW, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.2);
     }
     protected void spawnFailureParticle(Level world, Vec3 pos) {
-        ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.1);
+        ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.2);
     }
     protected void playSuccessSound(Level world, LivingEntity user, int spellLevel){
         world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F / spellLevel);

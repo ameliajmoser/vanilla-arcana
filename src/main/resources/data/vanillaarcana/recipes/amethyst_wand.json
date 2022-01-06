@@ -2,12 +2,15 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "  X",
-        " | ",
+        " |S",
         "|  "
     ],
     "key": {
         "|": {
             "item": "minecraft:stick"
+        },
+        "S": {
+            "item": "minecraft:string"
         },
         "X": {
             "item":"minecraft:amethyst_shard"

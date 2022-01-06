@@ -59,7 +59,7 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
                 case 3:
                     velocity = look.scale(0.1);
                     //last parameter is explosionpower
-                    fireball = new LargeFireball(world, user, 0,0,0, 20);
+                    fireball = new LargeFireball(world, user, 0,0,0, 3);
                     break;
                 default:
                     break;  

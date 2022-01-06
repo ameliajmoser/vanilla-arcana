@@ -1,7 +1,13 @@
 {
     "item.vanillaarcana.amethyst_wand": "Amethyst Wand",
     "item.vanillaarcana.nether_wand": "Nether Wand",
+    "item.vanillaarcana.end_wand": "Ender Wand",
+    "item.vanillaarcana.necrotic_wand": "Necrotic Wand",
+    "item.vanillaarcana.prismarine_wand": "Prismarine Wand",
+    "item.vanillaarcana.chorus_sprout": "Chorus Sprout",
+
     "item.vanillaarcana.aegis_block": "Aegis Block",
+    
     
     "block.vanillaarcana.aegis_block": "Aegis Block",
 

@@ -2,12 +2,15 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "  X",
-        " | ",
+        " |T",
         "|  "
     ],
     "key": {
         "|": {
             "item": "minecraft:blaze_rod"
+        },
+        "T": {
+            "item":"minecraft:weeping_vines"
         },
         "X": {
             "item":"minecraft:nether_star"

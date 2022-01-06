@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "  X",
+        " |w",
+        "|  "
+    ],
+    "key": {
+        "|": {
+            "item": "minecraft:bamboo"
+        },
+        "w": {
+            "item": "minecraft:seagrass"
+        },
+        "X": {
+            "item":"minecraft:prismarine_shard"
+        }
+    },
+    "result": {
+        "item": "vanillaarcana:prismarine_wand"
+    }
+}

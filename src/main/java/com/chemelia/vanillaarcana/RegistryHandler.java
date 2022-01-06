@@ -13,6 +13,7 @@ import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.WandItem;
+import com.chemelia.vanillaarcana.item.ChorusSproutItem;
 import com.google.common.base.Supplier;
 
 import net.minecraft.client.renderer.entity.ZombieRenderer;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
@@ -77,10 +77,24 @@ public class RegistryHandler {
     //Items
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VanillaArcana.MOD_ID);
 
+    public static final RegistryObject<Item> CHORUS_SPROUT = ITEMS.register("chorus_sprout", () -> new ChorusSproutItem(new Item.Properties()
+        .stacksTo(1)
+        .tab(CreativeModeTab.TAB_TOOLS)));
+
+
     public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
         .tab(CreativeModeTab.TAB_TOOLS)));
     public static final RegistryObject<Item> NETHER_WAND = ITEMS.register("nether_wand", () -> new WandItem(new Item.Properties()
+        .stacksTo(1)
+        .tab(CreativeModeTab.TAB_TOOLS)));
+    public static final RegistryObject<Item> END_WAND = ITEMS.register("end_wand", () -> new WandItem(new Item.Properties()
+        .stacksTo(1)
+        .tab(CreativeModeTab.TAB_TOOLS)));
+    public static final RegistryObject<Item> NECROTIC_WAND = ITEMS.register("necrotic_wand", () -> new WandItem(new Item.Properties()
+        .stacksTo(1)
+        .tab(CreativeModeTab.TAB_TOOLS)));
+    public static final RegistryObject<Item> PRISMARINE_WAND = ITEMS.register("prismarine_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
         .tab(CreativeModeTab.TAB_TOOLS)));
 

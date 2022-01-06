@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "  X",
+        " |g",
+        "|  "
+    ],
+    "key": {
+        "|": {
+            "item": "vanillaarcana:chorus_sprout"
+        },
+        "X": {
+            "item":"minecraft:ender_eye"
+        },
+        "g": {
+            "item":"minecraft:gold_ingot"
+        }
+    },
+    "result": {
+        "item": "vanillaarcana:end_wand"
+    }
+}

@@ -9,6 +9,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -41,13 +43,15 @@ public class SyphonEnchantment extends SpellEnchantment {
     public void doPostAttack(LivingEntity attacker, Entity target, int spellLevel){
         if (!attacker.level.isClientSide()){
             ServerLevel world = (ServerLevel) attacker.level;
-            attacker.level.playSound(null, attacker.blockPosition(), RegistryHandler.SPELL_SAP.get(), SoundSource.PLAYERS, 1, 0.5F);
             if (target instanceof Player){
+                attacker.level.playSound(null, attacker.blockPosition(), RegistryHandler.SPELL_SAP.get(), SoundSource.PLAYERS, 1, 0.5F);
                 ((Player) target).giveExperiencePoints(-(spellLevel + 1));
-            }
-            for (int i = 0; i< spellLevel; ++i){
-                ExperienceOrb orb = new ExperienceOrb(world, target.position().x, target.position().y + 1, target.position().z, 1);
-                world.addFreshEntity(orb);
+            } else if (target instanceof Enemy) {
+                attacker.level.playSound(null, attacker.blockPosition(), RegistryHandler.SPELL_SAP.get(), SoundSource.PLAYERS, 1, 0.5F);
+                for (int i = 0; i<spellLevel; ++i){
+                    ExperienceOrb orb = new ExperienceOrb(world, target.position().x, target.position().y + 1, target.position().z, 2);
+                    world.addFreshEntity(orb);
+                }
             }
         }
     }

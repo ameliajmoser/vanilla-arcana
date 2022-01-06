@@ -10,8 +10,6 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 
 public class ThrowableBlock extends ThrowableItemProjectile implements IEntityAdditionalSpawnData {
 
-
-
     public ThrowableBlock(EntityType<? extends ThrowableItemProjectile> type, LivingEntity owner,
             Level world) {
         super(type, owner, world);
@@ -21,11 +19,6 @@ public class ThrowableBlock extends ThrowableItemProjectile implements IEntityAd
             double posZ, Level world) {
         super(type, posX, posY, posZ, world);
     }
-
-
-
-
-
 
 
     @Override

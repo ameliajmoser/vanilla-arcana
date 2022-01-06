@@ -35,7 +35,7 @@ public class WandItem extends Item {
         }
 
         for (Enchantment enchant : EnchantmentHelper.getEnchantments(stack).keySet()){
-            if (enchant instanceof SpellEnchantment && ((SpellEnchantment) enchant).handleCast(world, player,stack)){
+            if (enchant instanceof SpellEnchantment && ((SpellEnchantment) enchant).handleCast(world,player,stack)){
                 return InteractionResultHolder.success(stack);
             }
         }

@@ -12,14 +12,14 @@ import net.minecraft.world.phys.Vec3;
 /////////////
 //Shoot a projectile that creates a lightning strike, or create a lightning strike at the block you're looking at?
 
-public class LightningStrikeEnchantment extends SpellEnchantment {
+public class LightningEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 3;
     private final static int SPELL_COST = 5;
     private final static int MAX_LEVEL = 5;
     private final static int PROJECTILE_SPEED = 1;
-    public static final String ID = VanillaArcana.MOD_ID + ":syphon";
+    public static final String ID = VanillaArcana.MOD_ID + ":lightning";
 
-    public LightningStrikeEnchantment() {
+    public LightningEnchantment() {
         super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 

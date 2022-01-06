@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "ooX",
+        " |P",
+        "|  "
+    ],
+    "key": {
+        "|": {
+            "item": "minecraft:bone"
+        },
+        "X": {
+            "item":"minecraft:skeleton_skull"
+        },
+        "P": {
+            "item":"minecraft:phantom_membrane"
+        },
+        "o": {
+            "item":"minecraft:fermented_spider_eye"
+        }
+    },
+    "result": {
+        "item": "vanillaarcana:necrotic_wand"
+    }
+}

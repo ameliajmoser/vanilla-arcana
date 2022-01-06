@@ -39,12 +39,13 @@ public class SyphonSnowball extends Snowball {
         Entity hitEntity = result.getEntity();
         hitEntity.hurt(DamageSource.thrown(this, this.getOwner()), (float)spellLevel);
         if (hitEntity instanceof Player){
+            owner.level.playSound(null, owner.blockPosition(), RegistryHandler.SPELL_SAP.get(), SoundSource.PLAYERS, 1, 0.5F);
             ((Player) hitEntity).giveExperiencePoints(-SPELL_COST * spellLevel);
             ((Player) owner).giveExperiencePoints(SPELL_COST * spellLevel);
         } else if (!world.isClientSide()){
             owner.level.playSound(null, owner.blockPosition(), RegistryHandler.SPELL_SAP.get(), SoundSource.PLAYERS, 1, 0.5F);
-            for (int i = 0; i< spellLevel*(SPELL_COST + spellLevel); ++i){
-                ExperienceOrb orb = new ExperienceOrb(world, hitEntity.position().x, hitEntity.position().y + 1, hitEntity.position().z, 1);
+            for (int i = 0; i< SPELL_COST+spellLevel; ++i){
+                ExperienceOrb orb = new ExperienceOrb(world, hitEntity.position().x, hitEntity.position().y + 1, hitEntity.position().z, spellLevel);
                 world.addFreshEntity(orb);
             }
         }

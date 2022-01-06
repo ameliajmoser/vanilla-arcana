@@ -24,7 +24,7 @@ public class AegisBlock extends StainedGlassPaneBlock {
 
     public AegisBlock(BlockBehaviour.Properties props){
         super(DyeColor.CYAN, props);
-        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(3)).setValue(NORTH, Boolean.valueOf(false))
+        this.registerDefaultState(this.stateDefinition.any().setValue(NORTH, Boolean.valueOf(false))
                 .setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false))
                 .setValue(WEST, Boolean.valueOf(false)).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }

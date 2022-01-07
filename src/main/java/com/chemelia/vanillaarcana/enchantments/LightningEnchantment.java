@@ -20,14 +20,13 @@ public class LightningEnchantment extends SpellEnchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":lightning";
 
     public LightningEnchantment() {
-        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
+        super(Rarity.COMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
     @Override
     public int getMaxLevel(){
         return MAX_LEVEL;
     }
-
 
     @Override
     public boolean handleCast(Level world, LivingEntity user, ItemStack stack){

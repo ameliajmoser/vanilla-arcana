@@ -25,7 +25,7 @@ public class FrostEnchantment extends SpellEnchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":frost";
 
     public FrostEnchantment() {
-        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
+        super(Rarity.COMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
     @Override

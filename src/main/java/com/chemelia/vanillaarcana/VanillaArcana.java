@@ -1,5 +1,7 @@
 package com.chemelia.vanillaarcana;
 
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -41,6 +43,8 @@ public class VanillaArcana
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+
+        ItemBlockRenderTypes.setRenderLayer(RegistryHandler.AEGIS_BLOCK.get(), RenderType.translucent());
     }
 
     /*

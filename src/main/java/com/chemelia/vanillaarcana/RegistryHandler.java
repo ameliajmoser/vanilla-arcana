@@ -24,11 +24,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StainedGlassBlock;
+import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -42,7 +46,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = VanillaArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RegistryHandler {
-
 
     //Sounds
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, VanillaArcana.MOD_ID);
@@ -70,10 +73,11 @@ public class RegistryHandler {
     public static final RegistryObject<Block> AEGIS_BLOCK = registerBlock("aegis_block", ()-> new AegisBlock(BlockBehaviour.Properties
         .of(Material.GLASS)
         .strength(15F, 0.1F)
-        .sound(SoundType.GLASS)
+        .sound(SoundType.AMETHYST)
         .noOcclusion()
-        .noDrops()));
-
+        .noDrops()
+        .lightLevel((val)->{return 2;})));
+        
     //Items
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VanillaArcana.MOD_ID);
 
@@ -81,22 +85,21 @@ public class RegistryHandler {
         .stacksTo(1)
         .tab(CreativeModeTab.TAB_TOOLS)));
 
-
     public static final RegistryObject<Item> AMETHYST_WAND = ITEMS.register("amethyst_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
-        .tab(CreativeModeTab.TAB_TOOLS)));
+        .tab(CreativeModeTab.TAB_TOOLS), 15));
     public static final RegistryObject<Item> NETHER_WAND = ITEMS.register("nether_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
-        .tab(CreativeModeTab.TAB_TOOLS)));
+        .tab(CreativeModeTab.TAB_TOOLS), 30));
     public static final RegistryObject<Item> END_WAND = ITEMS.register("end_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
-        .tab(CreativeModeTab.TAB_TOOLS)));
+        .tab(CreativeModeTab.TAB_TOOLS), 40));
     public static final RegistryObject<Item> NECROTIC_WAND = ITEMS.register("necrotic_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
-        .tab(CreativeModeTab.TAB_TOOLS)));
+        .tab(CreativeModeTab.TAB_TOOLS), 20));
     public static final RegistryObject<Item> PRISMARINE_WAND = ITEMS.register("prismarine_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
-        .tab(CreativeModeTab.TAB_TOOLS)));
+        .tab(CreativeModeTab.TAB_TOOLS), 20));
 
     //Entities
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, VanillaArcana.MOD_ID);
@@ -132,6 +135,8 @@ public class RegistryHandler {
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(TAMED_ZOMBIE.get(), ZombieRenderer::new);
     }
+
+    
 
     //Enchantments
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VanillaArcana.MOD_ID);

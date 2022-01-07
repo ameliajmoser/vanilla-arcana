@@ -18,7 +18,7 @@ public class AerothurgeEnchantment extends SpellEnchantment {
 
     
     public AerothurgeEnchantment() {
-        super(Rarity.RARE, SPELL_COOLDOWN, SPELL_COST);
+        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
     @Override

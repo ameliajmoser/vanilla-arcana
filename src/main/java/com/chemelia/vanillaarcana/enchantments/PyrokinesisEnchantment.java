@@ -3,6 +3,9 @@ package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.VanillaArcana;
 
+import org.lwjgl.system.CallbackI.P;
+
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
@@ -75,5 +78,13 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
                 }
             return true;
         } else return false;
+    }
+
+    //Increases the speed of any fireballs reflected - like lethal league for wizards!
+    @Override
+    public void doPostAttack(LivingEntity attacker, Entity target, int spellLevel){
+        if (target instanceof Fireball){
+            target.setDeltaMovement(target.getDeltaMovement().scale(1.2));
+        }
     }
 }

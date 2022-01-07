@@ -1,32 +1,59 @@
 package com.chemelia.vanillaarcana.block;
 
-import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
+import java.util.Random;
 
+import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-
+ 
 public class AegisBlock extends StainedGlassPaneBlock {
-    public static final BooleanProperty NORTH = PipeBlock.NORTH;
-    public static final BooleanProperty EAST = PipeBlock.EAST;
-    public static final BooleanProperty SOUTH = PipeBlock.SOUTH;
-    public static final BooleanProperty WEST = PipeBlock.WEST;
-    public static final BooleanProperty UP = PipeBlock.UP;
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public static final IntegerProperty AGE = BlockStateProperties.AGE_25;
+    public static final int DEFAULT_LIFETIME = 60;
+    private int lifetime;
+
+    public AegisBlock(BlockBehaviour.Properties props, int lifetime){
+        super(DyeColor.CYAN, props);
+        this.lifetime = lifetime;
+    }
 
     public AegisBlock(BlockBehaviour.Properties props){
-        super(DyeColor.CYAN, props);
-        this.registerDefaultState(this.stateDefinition.any().setValue(NORTH, Boolean.valueOf(false))
-                .setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false))
-                .setValue(WEST, Boolean.valueOf(false)).setValue(WATERLOGGED, Boolean.valueOf(false)));
+        this(props, DEFAULT_LIFETIME);
+    }
+
+    public void setLifetime(int time){
+        this.lifetime = time;
+    }
+
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
+        //super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
+        pLevel.scheduleTick(pPos, this, lifetime);
+     }
+     
+    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, Random pRandom) {
+        pLevel.destroyBlock(pPos, false);
+        if (pLevel.getBlockState(pPos.above()) == this.defaultBlockState()){
+            pLevel.destroyBlock(pPos.above(), false);
+        }
+        if (pLevel.getBlockState(pPos.below()) == this.defaultBlockState()){
+            pLevel.destroyBlock(pPos.below(), false);
+        }
+        if (pLevel.getBlockState(pPos.north()) == this.defaultBlockState()){
+            pLevel.destroyBlock(pPos.north(), false);
+        }
+        if (pLevel.getBlockState(pPos.south()) == this.defaultBlockState()){
+            pLevel.destroyBlock(pPos.south(), false);
+        }
+        if (pLevel.getBlockState(pPos.east()) == this.defaultBlockState()){
+            pLevel.destroyBlock(pPos.east(), false);
+        }
+        if (pLevel.getBlockState(pPos.west()) == this.defaultBlockState()){
+            pLevel.destroyBlock(pPos.west(), false);
+        }
     }
 
     @Override

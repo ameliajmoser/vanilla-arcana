@@ -2,6 +2,7 @@ package com.chemelia.vanillaarcana.entity.projectile;
 
 import com.chemelia.vanillaarcana.enchantments.FrostEnchantment;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -37,12 +38,6 @@ public class FrostSnowball extends Snowball {
     }
 
 
-
-
-
-    
-
-
     public void onHitEntity(EntityHitResult result){
         super.onHitEntity(result);
         Entity hitEntity = result.getEntity();
@@ -60,11 +55,32 @@ public class FrostSnowball extends Snowball {
         if (Math.random() > 0.7){
             emitSnowflake(1, 0.01);
         }
-        if (world.getBlockState(this.blockPosition()).is(Blocks.WATER) && world.getBlockState(this.blockPosition().above()) == Blocks.AIR.defaultBlockState()){
+        if (world.getBlockState(this.blockPosition()).is(Blocks.WATER)){
             world.setBlockAndUpdate(this.blockPosition(), Blocks.ICE.defaultBlockState());
             world.playSound(null, this.blockPosition(), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.PLAYERS, 1, 1.0F);
             emitSnowflake(15, 0.5);
             this.discard();
+            switch (spellLevel){
+                case 5:
+                case 4:
+                case 3:
+                waterToIce(this.blockPosition().north(2));
+                waterToIce(this.blockPosition().south(2));
+                waterToIce(this.blockPosition().east(2));
+                waterToIce(this.blockPosition().west(2));
+                waterToIce(this.blockPosition().north().east());
+                waterToIce(this.blockPosition().north().west());
+                waterToIce(this.blockPosition().south().west());
+                waterToIce(this.blockPosition().south().east());
+                case 2:
+                waterToIce(this.blockPosition().above());
+                waterToIce(this.blockPosition().below());
+                waterToIce(this.blockPosition().north());
+                waterToIce(this.blockPosition().south());
+                waterToIce(this.blockPosition().east());
+                waterToIce(this.blockPosition().west());
+                break;
+            }
         }
     }
 
@@ -80,6 +96,12 @@ public class FrostSnowball extends Snowball {
         Vec3 pos = this.position();
         if (world instanceof ServerLevel) {
             ((ServerLevel) world).sendParticles(ParticleTypes.SNOWFLAKE, pos.x, pos.y, pos.z, num, 0, 0, 0, 0.05);
+        }
+    }
+
+    private void waterToIce(BlockPos bPos){
+        if (world.getBlockState(bPos).is(Blocks.WATER)){
+            world.setBlockAndUpdate(bPos, Blocks.ICE.defaultBlockState());
         }
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 //////////////////
 //  WARD/AEGIS  //
@@ -43,44 +44,63 @@ public class AegisEnchantment extends SpellEnchantment {
                 distance -=2;
             }
             BlockPos center = userBlockpos;
+            if (user.getXRot() < -8){
+                center = center.above();
+            }
+            if (user.getXRot() < -20){
+                center = center.above();
+                distance -=1;
+            }
+            if (user.getXRot() < -40){
+                distance = 1;
+            }
+            if (user.getXRot() < -80){
+                distance = 0;
+            }
             switch (dir){
                 case DOWN:
                     break;
                 case UP:
                     break;
                 case NORTH:
-                    center = userBlockpos.north(distance);
+                    center = center.north(distance);
                     break;
                 case SOUTH:
-                    center = userBlockpos.south(distance);
+                    center = center.south(distance);
                     break;
                 case WEST:
-                    center = userBlockpos.west(distance);
+                    center = center.west(distance);
                     break;
                 case EAST:
-                    center = userBlockpos.east(distance);
+                    center = center.east(distance);
                     break;
             }
 
-            if (dir == Direction.EAST || dir == Direction.WEST){
-                placeShieldPane(center.above().north(1), world);
-                placeShieldPane(center.north(1), world);
-                placeShieldPane(center.below().north(1), world);
-                placeShieldPane(center.above().south(1), world);
-                placeShieldPane(center.south(1), world);
-                placeShieldPane(center.below().south(1), world);
+            if (dir == Direction.EAST || dir == Direction.WEST){  
+                placeShieldPane(center.north(), world);
+                placeShieldPane(center.below().north(), world);
+                placeShieldPane(center.south(), world);
+                placeShieldPane(center.below().south(), world);
+                if (spellLevel > 1){
+                    placeShieldPane(center.above().north(), world);
+                    placeShieldPane(center.above().south(), world);
+                }
             } else if (dir == Direction.NORTH || dir == Direction.SOUTH){
-                placeShieldPane(center.above().west(1), world);
-                placeShieldPane(center.west(1), world);
-                placeShieldPane(center.below().west(1), world);
-                placeShieldPane(center.above().east(1), world);
-                placeShieldPane(center.east(1), world);
-                placeShieldPane(center.below().east(1), world);
+                placeShieldPane(center.west(), world);
+                placeShieldPane(center.below().west(), world);
+                placeShieldPane(center.east(), world);
+                placeShieldPane(center.below().east(), world);
+                if (spellLevel > 1){
+                    placeShieldPane(center.above().west(), world);
+                    placeShieldPane(center.above().east(), world);
+                }                             
             }
             placeShieldPane(center, world);
-            placeShieldPane(center.above(), world);
             placeShieldPane(center.below(), world);
-
+            if (spellLevel > 1){
+                placeShieldPane(center.above(), world);
+            }
+            
             if (user instanceof Player) {
                 ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN * spellLevel * spellLevel);
             }
@@ -88,12 +108,9 @@ public class AegisEnchantment extends SpellEnchantment {
         } else return false;
     }
 
-
     private boolean placeShieldPane(BlockPos pos, Level world){
         if (world.isEmptyBlock(pos)){
             world.setBlockAndUpdate(pos, RegistryHandler.AEGIS_BLOCK.get().defaultBlockState());
-            //world.setBlockAndUpdate(pos, Blocks.CYAN_STAINED_GLASS_PANE.defaultBlockState());
-
             return true;
         } else return false;
     }

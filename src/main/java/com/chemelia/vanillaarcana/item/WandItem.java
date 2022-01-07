@@ -11,10 +11,15 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
-public class WandItem extends Item {
+public class WandItem extends Item {   
+    public final int enchantability; 
 
     public WandItem(Properties pProperties) {
+        this(pProperties, 15);
+    }
+    public WandItem(Properties pProperties, int enchantability) {
         super(pProperties);
+        this.enchantability = enchantability;
     }
 
     @Override
@@ -23,7 +28,7 @@ public class WandItem extends Item {
     }
     @Override
     public int getItemEnchantability(ItemStack stack){
-        return 30;
+        return this.enchantability;
     }
 
     

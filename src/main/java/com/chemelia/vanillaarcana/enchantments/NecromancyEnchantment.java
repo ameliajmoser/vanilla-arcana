@@ -42,17 +42,17 @@ public class NecromancyEnchantment extends SpellEnchantment {
                     Mob mob = (Mob) target;
                     switch (spellLevel) {
                         case 3:
-                            if (target instanceof WitherSkeleton) {
+                            if (target instanceof WitherSkeleton && !(target instanceof TamedZombie)) {
                                 mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                             }
                             break;
                         case 2:
-                            if (target instanceof Skeleton) {
+                            if (target instanceof Skeleton && !(target instanceof TamedZombie)) {
                                 mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                             }
                             break;
                         case 1:
-                            if (target instanceof Zombie) {
+                            if (target instanceof Zombie && !(target instanceof TamedZombie)) {
                                 mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                             }
                             break;
@@ -78,7 +78,6 @@ public class NecromancyEnchantment extends SpellEnchantment {
 
             switch (spellLevel){
                 case 1:
-                //TODO: Find out how to create an attribute supplier for this TAMED_ZOMBIE type
                     TamedZombie zombie = new TamedZombie(RegistryHandler.TAMED_ZOMBIE.get(), world, user);
                     zombie.setPos(pos);
                     world.addFreshEntity(zombie);

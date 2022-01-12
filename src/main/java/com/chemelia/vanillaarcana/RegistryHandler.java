@@ -9,7 +9,7 @@ import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
-import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
+import com.chemelia.vanillaarcana.entity.monster.TamableZombie;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.WandItem;
@@ -24,15 +24,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.StainedGlassBlock;
-import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -64,6 +60,7 @@ public class RegistryHandler {
         //registerBlockItem(name, toReturn);
         return toReturn;
     }
+    
     
     private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block) {
         ITEMS.register(name, () -> new BlockItem(block .get(),
@@ -118,7 +115,7 @@ public class RegistryHandler {
         .updateInterval(10)
         .build(VanillaArcana.MOD_ID + ":frost_projectile");
 
-    public static final RegistryObject<EntityType<TamedZombie>> TAMED_ZOMBIE = createTamedMonster("tamed_zombie", TamedZombie::new, 0.6F, 1.95F);
+    public static final RegistryObject<EntityType<TamableZombie>> TAMABLE_ZOMBIE = createTamedMonster("tamable_zombie", TamableZombie::new, 0.6F, 1.95F);
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> createTamedMonster(String name, EntityType.EntityFactory<T> factory, float width, float height){
         ResourceLocation location = new ResourceLocation(VanillaArcana.MOD_ID, name);
@@ -128,15 +125,14 @@ public class RegistryHandler {
 
     @SubscribeEvent
     public static void addEntityAttributes(EntityAttributeCreationEvent event) {
-        event.put(TAMED_ZOMBIE.get(), TamedZombie.createAttributes().build());
+        event.put(TAMABLE_ZOMBIE.get(), TamableZombie.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(TAMED_ZOMBIE.get(), ZombieRenderer::new);
+        event.registerEntityRenderer(TAMABLE_ZOMBIE.get(), ZombieRenderer::new);
     }
 
-    
 
     //Enchantments
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VanillaArcana.MOD_ID);

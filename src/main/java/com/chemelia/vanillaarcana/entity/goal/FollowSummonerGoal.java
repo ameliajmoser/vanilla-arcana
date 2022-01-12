@@ -1,7 +1,8 @@
 package com.chemelia.vanillaarcana.entity.goal;
 
 import java.util.EnumSet;
-import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
+
+import com.chemelia.vanillaarcana.entity.monster.TamableMonster;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,7 +10,6 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,12 +18,12 @@ import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 
 public class FollowSummonerGoal extends Goal {
    public static final int TELEPORT_WHEN_DISTANCE_IS = 12;
-   private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
-   private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
-   private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
-   private final Monster monster;
-   private LivingEntity owner;
+   // private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
+   // private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
+   // private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
+   private final TamableMonster monster;
    private final LevelReader level;
+   private LivingEntity owner;
    private final double speedModifier;
    private final PathNavigation navigation;
    private int timeToRecalcPath;
@@ -32,7 +32,7 @@ public class FollowSummonerGoal extends Goal {
    private float oldWaterCost;
    private final boolean canFly;
    
-   public FollowSummonerGoal(Monster monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
+   public FollowSummonerGoal(TamableMonster monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
        this.monster = monster;
        this.level = monster.getLevel();
        this.speedModifier = speedModifier;
@@ -40,10 +40,6 @@ public class FollowSummonerGoal extends Goal {
        this.startDistance = startDistance;
        this.stopDistance = stopDistance;
        this.canFly = canFly;
-
-       if (monster instanceof TamedZombie){
-          owner = ((TamedZombie) monster).getOwner();
-       }
 
        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
       if (!(monster.getNavigation() instanceof GroundPathNavigation) && !(monster.getNavigation() instanceof FlyingPathNavigation)) {
@@ -56,6 +52,7 @@ public class FollowSummonerGoal extends Goal {
     * method as well.
     */
     public boolean canUse() {
+       LivingEntity owner = this.monster.getOwner();
         if (owner == null) {
            return false;
         } else if (owner.isSpectator()) {
@@ -63,6 +60,7 @@ public class FollowSummonerGoal extends Goal {
         } else if (this.monster.distanceToSqr(owner) < (double)(this.startDistance * this.startDistance)) {
            return false;
         } else {
+           this.owner = owner;
            return true;
         }
     }

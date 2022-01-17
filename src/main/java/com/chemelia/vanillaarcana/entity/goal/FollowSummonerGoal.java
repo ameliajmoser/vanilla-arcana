@@ -5,6 +5,7 @@ import java.util.EnumSet;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
@@ -22,7 +23,7 @@ public class FollowSummonerGoal extends Goal {
    // private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
    // private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
    // private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
-   private final Monster monster;
+   private final Mob monster;
    private final OwnableEntity ownableMonster;
    private final LevelReader level;
    private LivingEntity owner;
@@ -34,7 +35,7 @@ public class FollowSummonerGoal extends Goal {
    private float oldWaterCost;
    private final boolean canFly;
    
-   public FollowSummonerGoal(Monster monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
+   public FollowSummonerGoal(Mob monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
        this.monster = monster;
        this.ownableMonster = ((OwnableEntity) monster);
        this.level = monster.getLevel();

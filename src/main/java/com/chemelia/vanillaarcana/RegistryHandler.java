@@ -10,12 +10,18 @@ import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
+import com.chemelia.vanillaarcana.entity.monster.TamedPhantom;
+import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
+import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.WandItem;
 import com.chemelia.vanillaarcana.item.ChorusSproutItem;
 import com.google.common.base.Supplier;
 
+import net.minecraft.client.renderer.entity.PhantomRenderer;
+import net.minecraft.client.renderer.entity.SkeletonRenderer;
+import net.minecraft.client.renderer.entity.WitherSkeletonRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -28,6 +34,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -116,21 +123,36 @@ public class RegistryHandler {
         .build(VanillaArcana.MOD_ID + ":frost_projectile");
 
     public static final RegistryObject<EntityType<TamedZombie>> TAMED_ZOMBIE = createTamedMonster("tamed_zombie", TamedZombie::new, 0.6F, 1.95F);
+    public static final RegistryObject<EntityType<TamedSkeleton>> TAMED_SKELETON = createTamedMonster("tamed_skeleton", TamedSkeleton::new, 0.6F, 1.99F);
+    public static final RegistryObject<EntityType<TamedWitherSkeleton>> TAMED_WITHER_SKELETON = createTamedMonster("tamed_wither_skeleton", TamedWitherSkeleton::new, 0.7F, 2.4F);
+    //public static final RegistryObject<EntityType<TamedPhantom>> TAMED_PHANTOM = createTamedMonster("tamed_phantom", TamedPhantom::new, 0.9F, 0.5F);
+
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> createTamedMonster(String name, EntityType.EntityFactory<T> factory, float width, float height){
         ResourceLocation location = new ResourceLocation(VanillaArcana.MOD_ID, name);
-        EntityType<T> entity = EntityType.Builder.of(factory, MobCategory.MONSTER).sized(width,height).setTrackingRange(15).setUpdateInterval(2).build(location.toString());
+        EntityType<T> entity = EntityType.Builder.of(factory, MobCategory.MONSTER)
+            .sized(width,height)
+            .clientTrackingRange(8)
+            .fireImmune()
+            .immuneTo(Blocks.WITHER_ROSE)
+            .build(location.toString());
         return ENTITIES.register(name, ()->entity);
     }
 
     @SubscribeEvent
     public static void addEntityAttributes(EntityAttributeCreationEvent event) {
         event.put(TAMED_ZOMBIE.get(), TamedZombie.createAttributes().build());
+        event.put(TAMED_SKELETON.get(), TamedSkeleton.createAttributes().build());
+        //event.put(TAMED_PHANTOM.get(), TamedWitherSkeleton.createAttributes().build());
+        event.put(TAMED_WITHER_SKELETON.get(), TamedWitherSkeleton.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
        event.registerEntityRenderer(TAMED_ZOMBIE.get(), ZombieRenderer::new);
+       event.registerEntityRenderer(TAMED_SKELETON.get(), SkeletonRenderer::new);
+       //event.registerEntityRenderer(TAMED_PHANTOM.get(), PhantomRenderer::new);
+       event.registerEntityRenderer(TAMED_WITHER_SKELETON.get(), WitherSkeletonRenderer::new);
     }
 
 

@@ -17,6 +17,9 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.OldUsersConverter;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,65 +28,89 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.ZombieAttackGoal;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
 
-public class TamedZombie extends Zombie implements OwnableEntity {
-
-   public TamedZombie(Level world) {
-      super(world);
-  }
-
-  public TamedZombie(EntityType<? extends TamedZombie> type, Level world) {
+public class TamedSkeleton extends AbstractSkeleton implements OwnableEntity {
+  public TamedSkeleton(EntityType<? extends TamedSkeleton> type, Level world) {
       super(type, world);
   }
 
-  public TamedZombie(EntityType<? extends TamedZombie> type, Level world, Player player){
+  public TamedSkeleton(EntityType<? extends TamedSkeleton> type, Level world, Player player){
      this(type, world);
      tame(player);
+     this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(net.minecraft.world.item.Items.BOW));
   }
 
   @Override
-  protected void addBehaviourGoals(){
-    this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.2D, false));
-    this.goalSelector.addGoal(3, new FollowSummonerGoal(this, 1.0D, 10.0F, 2.0F, false));
-    this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));  
+  protected void registerGoals(){
+    this.goalSelector.addGoal(2, new FollowSummonerGoal(this, 1.0D, 10.0F, 2.0F, false));
+    this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));  
+    this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+    this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));  
   }
 
-  @Override
-  protected boolean isSunSensitive(){
-     return false;
-  }
+  protected SoundEvent getAmbientSound() {
+   return SoundEvents.SKELETON_AMBIENT;
+}
 
-     ///This makes the necromancy mobs wither in sunlight
-     @Override
-     public void aiStep(){
-        boolean flag = this.isSunBurnTick();
-        if (flag) {
-           net.minecraft.world.item.ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
-           if (!itemstack.isEmpty()) {
-              if (itemstack.isDamageableItem()) {
-                 itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
-                 if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
-                    this.broadcastBreakEvent(EquipmentSlot.HEAD);
-                    this.setItemSlot(EquipmentSlot.HEAD, net.minecraft.world.item.ItemStack.EMPTY);
-                 }
-              }
-              flag = false;
-           }
-           if (flag) {
-              this.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1, true, false));
-           }
-        }
-        super.aiStep();
-     }
+protected SoundEvent getHurtSound(DamageSource pDamageSource) {
+   return SoundEvents.SKELETON_HURT;
+}
+
+protected SoundEvent getDeathSound() {
+   return SoundEvents.SKELETON_DEATH;
+}
+
+protected SoundEvent getStepSound() {
+   return SoundEvents.SKELETON_STEP;
+}
+
+
+protected void dropCustomDeathLoot(DamageSource pSource, int pLooting, boolean pRecentlyHit) {
+   super.dropCustomDeathLoot(pSource, pLooting, pRecentlyHit);
+   Entity entity = pSource.getEntity();
+   if (entity instanceof Creeper) {
+      Creeper creeper = (Creeper)entity;
+      if (creeper.canDropMobsSkull()) {
+         creeper.increaseDroppedSkulls();
+         this.spawnAtLocation(net.minecraft.world.item.Items.SKELETON_SKULL);
+      }
+   }
+}
+
+   ///This makes the necromancy mobs wither in sunlight
+   @Override
+   public void aiStep(){
+      boolean flag = this.isSunBurnTick();
+      if (flag) {
+         ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
+         if (!itemstack.isEmpty()) {
+            if (itemstack.isDamageableItem()) {
+               itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
+               if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+                  this.broadcastBreakEvent(EquipmentSlot.HEAD);
+                  this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+               }
+            }
+            flag = false;
+         }
+         if (flag) {
+            this.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1, true, false));
+         }
+      }
+      super.aiStep();
+   }
 
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////                                                   

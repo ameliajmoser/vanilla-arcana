@@ -25,65 +25,59 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.ZombieAttackGoal;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
 
-public class TamedZombie extends Zombie implements OwnableEntity {
-
-   public TamedZombie(Level world) {
-      super(world);
-  }
-
-  public TamedZombie(EntityType<? extends TamedZombie> type, Level world) {
+public class TamedPhantom extends Phantom implements OwnableEntity {
+  public TamedPhantom(EntityType<? extends TamedPhantom> type, Level world) {
       super(type, world);
   }
 
-  public TamedZombie(EntityType<? extends TamedZombie> type, Level world, Player player){
+  public TamedPhantom(EntityType<? extends TamedPhantom> type, Level world, Player player){
      this(type, world);
      tame(player);
   }
 
   @Override
-  protected void addBehaviourGoals(){
-    this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.2D, false));
-    this.goalSelector.addGoal(3, new FollowSummonerGoal(this, 1.0D, 10.0F, 2.0F, false));
-    this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));  
-    this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
-    this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));  
+  protected void registerGoals(){
+   super.registerGoals();
+   this.goalSelector.addGoal(4, new FollowSummonerGoal(this, 1.0D, 10.0F, 2.0F, true));
+   this.targetSelector.removeAllGoals();
+   this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
+   this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this)); 
   }
 
   @Override
-  protected boolean isSunSensitive(){
-     return false;
+  public boolean canBeAffected(MobEffectInstance effect){
+     return (effect.getEffect() == MobEffects.WITHER) ? true : super.canBeAffected(effect);
   }
 
-     ///This makes the necromancy mobs wither in sunlight
-     @Override
-     public void aiStep(){
-        boolean flag = this.isSunBurnTick();
-        if (flag) {
-           net.minecraft.world.item.ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
-           if (!itemstack.isEmpty()) {
-              if (itemstack.isDamageableItem()) {
-                 itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
-                 if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
-                    this.broadcastBreakEvent(EquipmentSlot.HEAD);
-                    this.setItemSlot(EquipmentSlot.HEAD, net.minecraft.world.item.ItemStack.EMPTY);
-                 }
-              }
-              flag = false;
-           }
-           if (flag) {
-              this.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1, true, false));
-           }
-        }
-        super.aiStep();
-     }
+   ///This makes the necromancy mobs wither in sunlight
+   @Override
+   public void aiStep(){
+      boolean flag = this.isSunBurnTick();
+      if (flag) {
+         ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
+         if (!itemstack.isEmpty()) {
+            if (itemstack.isDamageableItem()) {
+               itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
+               if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+                  this.broadcastBreakEvent(EquipmentSlot.HEAD);
+                  this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+               }
+            }
+            flag = false;
+         }
+         if (flag) {
+            this.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1, true, false));
+         }
+      }
+      super.aiStep();
+   }
 
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////                                                   

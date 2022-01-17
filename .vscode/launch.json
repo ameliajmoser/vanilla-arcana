@@ -12,7 +12,7 @@
       "args": "--launchTarget forgeclientuserdev --version MOD_DEV --assetIndex 1.18 --assetsDir C:\\Users\\Amelia\\.gradle\\caches\\forge_gradle\\assets --gameDir . --fml.forgeVersion 38.0.14 --fml.mcVersion 1.18 --fml.forgeGroup net.minecraftforge --fml.mcpVersion 20211130.085255",
       "env": {
         "MOD_CLASSES": "vanillaarcana%%${workspaceFolder}\\bin\\main;vanillaarcana%%${workspaceFolder}\\bin\\main",
-        "MCP_MAPPINGS": "parchment_2021.12.13-nightly-SNAPSHOT-1.18.1"
+        "MCP_MAPPINGS": "parchment_2021.12.19-nightly-SNAPSHOT-1.18.1"
       }
     },
     {
@@ -26,7 +26,7 @@
       "args": "--launchTarget forgedatauserdev --assetIndex 1.18 --assetsDir C:\\Users\\Amelia\\.gradle\\caches\\forge_gradle\\assets --gameDir . --fml.forgeVersion 38.0.14 --fml.mcVersion 1.18 --fml.forgeGroup net.minecraftforge --fml.mcpVersion 20211130.085255 --mod vanillaarcana --all --output C:\\Users\\Amelia\\Documents\\GitHub\\vanilla-arcana\\src\\generated\\resources --existing C:\\Users\\Amelia\\Documents\\GitHub\\vanilla-arcana\\src\\main\\resources",
       "env": {
         "MOD_CLASSES": "vanillaarcana%%${workspaceFolder}\\bin\\main;vanillaarcana%%${workspaceFolder}\\bin\\main",
-        "MCP_MAPPINGS": "parchment_2021.12.13-nightly-SNAPSHOT-1.18.1"
+        "MCP_MAPPINGS": "parchment_2021.12.19-nightly-SNAPSHOT-1.18.1"
       }
     },
     {
@@ -40,7 +40,7 @@
       "args": "--launchTarget forgeserveruserdev --gameDir . --fml.forgeVersion 38.0.14 --fml.mcVersion 1.18 --fml.forgeGroup net.minecraftforge --fml.mcpVersion 20211130.085255",
       "env": {
         "MOD_CLASSES": "vanillaarcana%%${workspaceFolder}\\bin\\main;vanillaarcana%%${workspaceFolder}\\bin\\main",
-        "MCP_MAPPINGS": "parchment_2021.12.13-nightly-SNAPSHOT-1.18.1"
+        "MCP_MAPPINGS": "parchment_2021.12.19-nightly-SNAPSHOT-1.18.1"
       }
     }
   ]

@@ -9,7 +9,7 @@ import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
-import com.chemelia.vanillaarcana.entity.monster.TamableZombie;
+import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.WandItem;
@@ -115,7 +115,7 @@ public class RegistryHandler {
         .updateInterval(10)
         .build(VanillaArcana.MOD_ID + ":frost_projectile");
 
-    public static final RegistryObject<EntityType<TamableZombie>> TAMABLE_ZOMBIE = createTamedMonster("tamable_zombie", TamableZombie::new, 0.6F, 1.95F);
+    public static final RegistryObject<EntityType<TamedZombie>> TAMED_ZOMBIE = createTamedMonster("tamed_zombie", TamedZombie::new, 0.6F, 1.95F);
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> createTamedMonster(String name, EntityType.EntityFactory<T> factory, float width, float height){
         ResourceLocation location = new ResourceLocation(VanillaArcana.MOD_ID, name);
@@ -125,12 +125,12 @@ public class RegistryHandler {
 
     @SubscribeEvent
     public static void addEntityAttributes(EntityAttributeCreationEvent event) {
-        event.put(TAMABLE_ZOMBIE.get(), TamableZombie.createAttributes().build());
+        event.put(TAMED_ZOMBIE.get(), TamedZombie.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(TAMABLE_ZOMBIE.get(), ZombieRenderer::new);
+       event.registerEntityRenderer(TAMED_ZOMBIE.get(), ZombieRenderer::new);
     }
 
 

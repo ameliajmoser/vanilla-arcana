@@ -44,7 +44,7 @@ public abstract class SpellEnchantment extends Enchantment {
         }
         int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
         Vec3 look = user.getLookAngle();
-        Vec3 pos = user.getEyePosition().add(look.scale(0.9));
+        Vec3 pos = user.getEyePosition().add(look.scale(0.4));
 
         if (user instanceof Player) {
             Player player = (Player) user;
@@ -66,7 +66,7 @@ public abstract class SpellEnchantment extends Enchantment {
         ((ServerLevel) world).sendParticles(ParticleTypes.GLOW, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.2);
     }
     protected void spawnFailureParticle(Level world, Vec3 pos) {
-        ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.2);
+        ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z, 5, 0, 0, 0, 0.05);
     }
     protected void playSuccessSound(Level world, LivingEntity user, int spellLevel){
         world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F / spellLevel);

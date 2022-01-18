@@ -55,7 +55,7 @@ public class WarpEnchantment extends SpellEnchantment {
                 doSpellFailure(user, world, pos, stack, spellCost, spellLevel);
                 return false;
             } else {
-                Vec3 destination = pos.add(look.scale((double) RANGE*spellLevel));
+                Vec3 destination = pos.add(look.scale((double) RANGE*spellLevel*spellLevel));
                 if (spellLevel > 4){
                     destination = pos.add(look.scale(99999.0D));
                 }

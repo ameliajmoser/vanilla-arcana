@@ -10,7 +10,6 @@ import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
-import com.chemelia.vanillaarcana.entity.monster.TamedPhantom;
 import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
@@ -18,8 +17,6 @@ import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.item.WandItem;
 import com.chemelia.vanillaarcana.item.ChorusSproutItem;
 import com.google.common.base.Supplier;
-
-import net.minecraft.client.renderer.entity.PhantomRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.client.renderer.entity.WitherSkeletonRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;

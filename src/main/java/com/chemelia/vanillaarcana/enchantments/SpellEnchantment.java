@@ -49,19 +49,51 @@ public abstract class SpellEnchantment extends Enchantment {
         if (user instanceof Player) {
             Player player = (Player) user;
             if (player.totalExperience < spellCost * spellLevel && !player.isCreative()) {
-                player.getCooldowns().addCooldown(stack.getItem(), spellCooldown * 10);
-                playFailureSound(world, user);
-                if (world instanceof ServerLevel) {spawnFailureParticle(world, pos);}
+                doSpellFailure(user, world, pos, stack, spellCost, spellLevel);
                 return false;
-            } else if (!player.isCreative()) {
-                player.giveExperiencePoints(-spellCost * spellLevel);
+            } else {
+                doSpellSuccess(user, world, pos, stack, spellCost, spellLevel);
+                return true;
             }
-            playSuccessSound(world, user, spellLevel);
-            if (world instanceof ServerLevel) {spawnSuccessParticle(world, pos);}
         }
         return true;
     }
-    
+
+    protected void doSpellSuccess(LivingEntity user, Level world, Vec3 pos, ItemStack stack, int spellCost, int spellLevel){
+        if (user instanceof Player){
+            Player player = (Player) user;
+            subtractSpellXP(player, spellCost*spellLevel);
+            cooldownSuccess(player, stack, spellLevel);
+        }
+        playSuccessSound(world, user, spellLevel);
+        spawnSuccessParticle(world, pos);
+    }
+
+    protected void doSpellFailure(LivingEntity user, Level world, Vec3 pos, ItemStack stack, int spellCost, int spellLevel){
+        if (user instanceof Player){
+            cooldownFail((Player) user, stack);
+        }
+        playFailureSound(world, user);
+        spawnFailureParticle(world, pos);
+    }
+
+    protected void subtractSpellXP(Player player, int cost){
+        if (!player.isCreative()){
+            if (player.totalExperience < cost){
+                System.out.println("ERROR - should have checked xp beforehand");
+            }
+            player.giveExperiencePoints(-cost);
+        }
+    }
+
+    protected void cooldownFail(Player player, ItemStack stack){
+        player.getCooldowns().addCooldown(stack.getItem(), spellCooldown);
+    }
+    protected void cooldownSuccess(Player player, ItemStack stack, int spellLevel){
+        player.getCooldowns().addCooldown(stack.getItem(), spellCooldown*spellLevel*spellLevel);
+    }
+
+
     protected void spawnSuccessParticle(Level world, Vec3 pos){
         ((ServerLevel) world).sendParticles(ParticleTypes.GLOW, pos.x, pos.y, pos.z, 15, 0, 0, 0, 0.2);
     }
@@ -74,5 +106,4 @@ public abstract class SpellEnchantment extends Enchantment {
     protected void playFailureSound(Level world, LivingEntity user){
         world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 1, 0.9F);
     }
-
 }

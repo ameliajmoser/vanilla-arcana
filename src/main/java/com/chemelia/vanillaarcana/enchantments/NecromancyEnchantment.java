@@ -9,6 +9,7 @@ import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -60,7 +61,9 @@ public class NecromancyEnchantment extends SpellEnchantment {
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
                                 }
+                                spawnTameParticles(attacker.level, target.getEyePosition());
                                 ((TamedWitherSkeleton) mob).tame((Player) attacker);
+                                mob.lookAt(attacker, 180, 180);
                                 success = true;
                             }
                         case 2:
@@ -70,7 +73,9 @@ public class NecromancyEnchantment extends SpellEnchantment {
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
                                 }
+                                spawnTameParticles(attacker.level, target.getEyePosition());
                                 ((TamedSkeleton) mob).tame((Player) attacker);
+                                mob.lookAt(attacker, 180, 180);
                                 success = true;
                             }
                         case 1:
@@ -80,16 +85,16 @@ public class NecromancyEnchantment extends SpellEnchantment {
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
                                 }
+                                spawnTameParticles(attacker.level, target.getEyePosition());
                                 ((TamedZombie) mob).tame((Player) attacker);
+                                mob.lookAt(attacker, 180, 180);
                                 success = true;
                             }
                         default:
                             break;
                     }
-                    // subtract xp
                     if (success) {
-                        player.giveExperiencePoints(-SPELL_COST * spellLevel);
-                        spawnTameParticles(attacker.getLevel(), target.getEyePosition());
+                        doSpellSuccess(attacker, attacker.level, attacker.position(), attacker.getItemInHand(InteractionHand.MAIN_HAND), spellCost, spellLevel);
                     }
                 }
             }

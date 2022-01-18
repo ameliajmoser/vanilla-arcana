@@ -116,9 +116,6 @@ public class AegisEnchantment extends SpellEnchantment {
                 placeShieldPane(center.above(), world);
             }
             
-            if (user instanceof Player) {
-                ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN * spellLevel * spellLevel);
-            }
             return true;
         } else return false;
     }

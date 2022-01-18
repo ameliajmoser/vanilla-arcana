@@ -13,8 +13,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class WebSnowball extends Snowball {
-    public static final int SPELL_COST = WebEnchantment.spellCost;
-    private LivingEntity owner;
     private Level world;
     private int spellLevel;
 
@@ -24,7 +22,6 @@ public class WebSnowball extends Snowball {
 
     public WebSnowball(Level world, LivingEntity owner, int spellLevel) {
         super(world, owner);
-        this.owner = owner;
         this.world = world;
         this.spellLevel = spellLevel;
     }

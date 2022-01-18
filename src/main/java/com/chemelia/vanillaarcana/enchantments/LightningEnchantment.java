@@ -16,7 +16,6 @@ public class LightningEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 3;
     private final static int SPELL_COST = 5;
     private final static int MAX_LEVEL = 5;
-    private final static int PROJECTILE_SPEED = 1;
     public static final String ID = VanillaArcana.MOD_ID + ":lightning";
 
     public LightningEnchantment() {

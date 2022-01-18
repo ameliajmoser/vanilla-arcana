@@ -3,8 +3,6 @@ package com.chemelia.vanillaarcana.enchantments;
 
 import com.chemelia.vanillaarcana.VanillaArcana;
 
-import org.lwjgl.system.CallbackI.P;
-
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

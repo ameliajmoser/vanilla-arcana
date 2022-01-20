@@ -29,6 +29,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -56,6 +57,7 @@ public class TamedWitherSkeleton extends WitherSkeleton implements OwnableEntity
     this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));  
+    this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
   }
 
   @Override

@@ -2,7 +2,8 @@ buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/'}
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
@@ -15,6 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+
 
 version = '${project.minecraft_version}-${project.mod_version}'
 group = 'com.chemelia.vanillaarcana' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -36,9 +38,8 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'parchment', version: '2021.12.19-nightly-SNAPSHOT-1.18.1'
-
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
+    mappings channel: 'parchment', version: '2021.12.19-1.18.1'
+    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -64,7 +65,6 @@ minecraft {
                 }
             }
         }
-
         server {
             workingDirectory project.file('run')
             // Recommended logging data for a userdev environment
@@ -85,10 +85,8 @@ minecraft {
                 }
             }
         }
-
         data {
             workingDirectory project.file('run')
-
             // Recommended logging data for a userdev environment
             // The markers can be added/remove as needed separated by commas.
             // "SCAN": For mods scan.

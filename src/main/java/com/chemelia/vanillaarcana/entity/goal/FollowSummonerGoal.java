@@ -18,7 +18,7 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 
 public class FollowSummonerGoal extends Goal {
-   public static final int TELEPORT_WHEN_DISTANCE_IS = 12;
+   public static final int TELEPORT_WHEN_DISTANCE_IS = 20;
    // private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
    // private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
    // private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
@@ -106,7 +106,7 @@ public class FollowSummonerGoal extends Goal {
         if (--this.timeToRecalcPath <= 0) {
            this.timeToRecalcPath = this.adjustedTickDelay(10);
            if (!this.monster.isLeashed() && !this.monster.isPassenger()) {
-              if (this.monster.distanceToSqr(this.owner) >= 144.0D) {
+              if (this.monster.distanceToSqr(this.owner) >= TELEPORT_WHEN_DISTANCE_IS*TELEPORT_WHEN_DISTANCE_IS) {
                  this.teleportToOwner();
               } else {
                  this.navigation.moveTo(this.owner, this.speedModifier);

@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -26,6 +28,8 @@ public class AegisEnchantment extends SpellEnchantment {
     private final static int MAX_LEVEL = 5;
     //private final static int PROJECTILE_SPEED = 1;
     private final static int RANGE = 5;
+    private final Block BLOCK = RegistryHandler.AEGIS_BLOCK.get();
+    private final BlockState B_STATE = BLOCK.defaultBlockState();
     public static final String ID = VanillaArcana.MOD_ID + ":aegis";
 
     public AegisEnchantment() {
@@ -92,37 +96,39 @@ public class AegisEnchantment extends SpellEnchantment {
                 }
             }
             if (dir == Direction.EAST || dir == Direction.WEST){  
-                placeShieldPane(center.north(), world);
-                placeShieldPane(center.below().north(), world);
-                placeShieldPane(center.south(), world);
-                placeShieldPane(center.below().south(), world);
+                placeShieldPane(center.north(), world, spellLevel);
+                placeShieldPane(center.below().north(), world, spellLevel);
+                placeShieldPane(center.south(), world, spellLevel);
+                placeShieldPane(center.below().south(), world, spellLevel);
                 if (spellLevel > 1){
-                    placeShieldPane(center.above().north(), world);
-                    placeShieldPane(center.above().south(), world);
+                    placeShieldPane(center.above().north(), world, spellLevel);
+                    placeShieldPane(center.above().south(), world, spellLevel);
                 }
             } else if (dir == Direction.NORTH || dir == Direction.SOUTH){
-                placeShieldPane(center.west(), world);
-                placeShieldPane(center.below().west(), world);
-                placeShieldPane(center.east(), world);
-                placeShieldPane(center.below().east(), world);
+                placeShieldPane(center.west(), world, spellLevel);
+                placeShieldPane(center.below().west(), world, spellLevel);
+                placeShieldPane(center.east(), world, spellLevel);
+                placeShieldPane(center.below().east(), world, spellLevel);
                 if (spellLevel > 1){
-                    placeShieldPane(center.above().west(), world);
-                    placeShieldPane(center.above().east(), world);
+                    placeShieldPane(center.above().west(), world, spellLevel);
+                    placeShieldPane(center.above().east(), world, spellLevel);
                 }                             
             }
-            placeShieldPane(center, world);
-            placeShieldPane(center.below(), world);
+            placeShieldPane(center, world, spellLevel);
+            placeShieldPane(center.below(), world, spellLevel);
             if (spellLevel > 1){
-                placeShieldPane(center.above(), world);
+                placeShieldPane(center.above(), world, spellLevel);
             }
             
             return true;
         } else return false;
     }
 
-    private boolean placeShieldPane(BlockPos pos, Level world){
-        if (!world.getBlockState(pos).isSuffocating(world, pos)){
-            world.setBlockAndUpdate(pos, RegistryHandler.AEGIS_BLOCK.get().defaultBlockState());
+    private boolean placeShieldPane(BlockPos pos, Level world, int spellLevel){
+        if (world.getBlockState(pos).getCollisionShape(world, pos).isEmpty()){
+            world.destroyBlock(pos, true);
+            world.setBlockAndUpdate(pos, B_STATE);
+            world.scheduleTick(pos, BLOCK, spellLevel*40);
             return true;
         } else return false;
     }

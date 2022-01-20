@@ -1,22 +1,29 @@
 package com.chemelia.vanillaarcana;
 
 import com.chemelia.vanillaarcana.block.AegisBlock;
+import com.chemelia.vanillaarcana.client.renderer.entity.ThrownBlockRenderer;
 import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
+import com.chemelia.vanillaarcana.enchantments.ConjurationEnchantment;
 import com.chemelia.vanillaarcana.enchantments.FrostEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WebEnchantment;
 import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
+import com.chemelia.vanillaarcana.enchantments.TelekinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
+import com.chemelia.vanillaarcana.entity.monster.TamedBlaze;
 import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
+import com.chemelia.vanillaarcana.entity.projectile.ThrownBlock;
 import com.chemelia.vanillaarcana.item.WandItem;
 import com.chemelia.vanillaarcana.item.ChorusSproutItem;
 import com.google.common.base.Supplier;
+
+import net.minecraft.client.renderer.entity.BlazeRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.client.renderer.entity.WitherSkeletonRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
@@ -105,6 +112,7 @@ public class RegistryHandler {
     //Entities
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, VanillaArcana.MOD_ID);
 
+
     public static final EntityType<SyphonSnowball> SYPHON_SNOWBALL= EntityType.Builder
         .<SyphonSnowball>of(SyphonSnowball::new, MobCategory.MISC)
         .sized(0.25F, 0.25F)
@@ -118,11 +126,20 @@ public class RegistryHandler {
         .clientTrackingRange(4)
         .updateInterval(10)
         .build(VanillaArcana.MOD_ID + ":frost_projectile");
+    
+
+    public static final RegistryObject<EntityType<ThrownBlock>> THROWN_BLOCK = ENTITIES.register("thrown_block", () -> EntityType.Builder.<ThrownBlock>of(ThrownBlock::new, MobCategory.MISC)
+        .setCustomClientFactory(ThrownBlock::new)
+        .sized(0.5F, 0.5F)
+        .clientTrackingRange(4)
+        .updateInterval(20)
+        .build(VanillaArcana.MOD_ID + ":thrown_block"));
 
     public static final RegistryObject<EntityType<TamedZombie>> TAMED_ZOMBIE = createTamedMonster("tamed_zombie", TamedZombie::new, 0.6F, 1.95F);
     public static final RegistryObject<EntityType<TamedSkeleton>> TAMED_SKELETON = createTamedMonster("tamed_skeleton", TamedSkeleton::new, 0.6F, 1.99F);
     public static final RegistryObject<EntityType<TamedWitherSkeleton>> TAMED_WITHER_SKELETON = createTamedMonster("tamed_wither_skeleton", TamedWitherSkeleton::new, 0.7F, 2.4F);
     //public static final RegistryObject<EntityType<TamedPhantom>> TAMED_PHANTOM = createTamedMonster("tamed_phantom", TamedPhantom::new, 0.9F, 0.5F);
+    public static final RegistryObject<EntityType<TamedBlaze>> TAMED_BLAZE = createTamedMonster("tamed_blaze", TamedBlaze::new, 0.6F, 1.8F);
 
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> createTamedMonster(String name, EntityType.EntityFactory<T> factory, float width, float height){
@@ -142,6 +159,7 @@ public class RegistryHandler {
         event.put(TAMED_SKELETON.get(), TamedSkeleton.createAttributes().build());
         //event.put(TAMED_PHANTOM.get(), TamedWitherSkeleton.createAttributes().build());
         event.put(TAMED_WITHER_SKELETON.get(), TamedWitherSkeleton.createAttributes().build());
+        event.put(TAMED_BLAZE.get(), TamedBlaze.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -150,6 +168,8 @@ public class RegistryHandler {
        event.registerEntityRenderer(TAMED_SKELETON.get(), SkeletonRenderer::new);
        //event.registerEntityRenderer(TAMED_PHANTOM.get(), PhantomRenderer::new);
        event.registerEntityRenderer(TAMED_WITHER_SKELETON.get(), WitherSkeletonRenderer::new);
+       event.registerEntityRenderer(TAMED_BLAZE.get(), BlazeRenderer::new);
+       event.registerEntityRenderer(THROWN_BLOCK.get(), ThrownBlockRenderer::new);
     }
 
 
@@ -167,6 +187,8 @@ public class RegistryHandler {
     public static final RegistryObject<Enchantment> NECROMANCY = ENCHANTMENTS.register("necromancy", NecromancyEnchantment::new);
     public static final RegistryObject<Enchantment> FROST = ENCHANTMENTS.register("frost", FrostEnchantment::new);
     public static final RegistryObject<Enchantment> WEB = ENCHANTMENTS.register("web", WebEnchantment::new);
+    public static final RegistryObject<Enchantment> CONJURATION = ENCHANTMENTS.register("conjuration", ConjurationEnchantment::new);
+    public static final RegistryObject<Enchantment> TELEKINESIS = ENCHANTMENTS.register("telekinesis", TelekinesisEnchantment::new);
     
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register
         SOUNDS.register(eventBus);

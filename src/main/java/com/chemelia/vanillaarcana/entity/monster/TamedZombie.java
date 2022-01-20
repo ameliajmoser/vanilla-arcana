@@ -27,6 +27,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.ZombieAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -55,6 +56,7 @@ public class TamedZombie extends Zombie implements OwnableEntity {
     this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));  
     this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));  
+    this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
   }
 
   @Override

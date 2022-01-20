@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.fluids.FluidAttributes.Water;
 
 public class WebSnowball extends Snowball {
     private Level world;
@@ -84,8 +85,10 @@ public class WebSnowball extends Snowball {
                 break;
         }
     }
+
     private boolean placeWeb(Level world, BlockPos pos){
-        if (world.isEmptyBlock(pos)){
+        if (world.getBlockState(pos).getCollisionShape(world, pos).isEmpty()  && !world.isWaterAt(pos)){
+            world.destroyBlock(pos, true);
             world.setBlockAndUpdate(pos, Blocks.COBWEB.defaultBlockState());
             return true;
         } else return false;

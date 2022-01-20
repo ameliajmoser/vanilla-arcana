@@ -30,6 +30,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
@@ -57,6 +58,7 @@ public class TamedSkeleton extends AbstractSkeleton implements OwnableEntity {
     this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
     this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));  
+    this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
   }
 
   protected SoundEvent getAmbientSound() {

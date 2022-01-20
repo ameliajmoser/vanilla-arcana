@@ -29,10 +29,10 @@ public class AegisBlock extends StainedGlassPaneBlock {
         this.lifetime = time;
     }
 
-    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
-        //super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
-        pLevel.scheduleTick(pPos, this, lifetime);
-     }
+    // public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
+    //     //super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
+    //     pLevel.scheduleTick(pPos, this, lifetime);
+    //  }
      
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, Random pRandom) {
         pLevel.destroyBlock(pPos, false);

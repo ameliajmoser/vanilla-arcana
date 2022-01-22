@@ -1,5 +1,7 @@
 package com.chemelia.vanillaarcana.enchantments;
 
+import javax.annotation.Nullable;
+
 import com.chemelia.vanillaarcana.RegistryHandler;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -49,32 +51,41 @@ public abstract class SpellEnchantment extends Enchantment {
         if (user instanceof Player) {
             Player player = (Player) user;
             if (player.totalExperience < spellCost * spellLevel && !player.isCreative()) {
-                doSpellFailure(user, world, pos, stack, spellCost, spellLevel);
-                return false;
+                return doSpellFailure(user, world, pos, stack, spellCost, spellLevel);
             } else {
-                doSpellSuccess(user, world, pos, stack, spellCost, spellLevel);
-                return true;
+                return doSpellSuccess(user, world, pos, stack, spellCost, spellLevel);
             }
         }
         return true;
     }
 
-    protected void doSpellSuccess(LivingEntity user, Level world, Vec3 pos, ItemStack stack, int spellCost, int spellLevel){
+    protected boolean doSpellSuccess(LivingEntity user, Level world, @Nullable Vec3 pos, ItemStack stack, int spellCost, int spellLevel){
         if (user instanceof Player){
             Player player = (Player) user;
             subtractSpellXP(player, spellCost*spellLevel);
             cooldownSuccess(player, stack, spellLevel);
         }
         playSuccessSound(world, user, spellLevel);
-        spawnSuccessParticle(world, pos);
+        if (pos != null){
+            spawnSuccessParticle(world, pos);
+        } else {
+            spawnSuccessParticle(world, user.getEyePosition().add(user.getLookAngle().scale(0.4)));
+        }
+        return true;
+        
     }
 
-    protected void doSpellFailure(LivingEntity user, Level world, Vec3 pos, ItemStack stack, int spellCost, int spellLevel){
+    protected boolean doSpellFailure(LivingEntity user, Level world, @Nullable Vec3 pos, ItemStack stack, int spellCost, int spellLevel){
         if (user instanceof Player){
             cooldownFail((Player) user, stack);
         }
         playFailureSound(world, user);
-        spawnFailureParticle(world, pos);
+        if (pos != null){
+            spawnFailureParticle(world, pos);
+        } else {
+            spawnFailureParticle(world, user.getEyePosition().add(user.getLookAngle().scale(0.4)));
+        }
+        return false;
     }
 
     protected void subtractSpellXP(Player player, int cost){
@@ -101,9 +112,9 @@ public abstract class SpellEnchantment extends Enchantment {
         ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, pos.x, pos.y, pos.z, 5, 0, 0, 0, 0.05);
     }
     protected void playSuccessSound(Level world, LivingEntity user, int spellLevel){
-        world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 1, 1.5F / spellLevel);
+        world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_CAST.get(), SoundSource.PLAYERS, 0.8F, 1.5F / spellLevel);
     }
     protected void playFailureSound(Level world, LivingEntity user){
-        world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 1, 0.9F);
+        world.playSound(null, user.blockPosition(), RegistryHandler.SPELL_FAIL.get(), SoundSource.PLAYERS, 0.8F, 0.9F);
     }
 }

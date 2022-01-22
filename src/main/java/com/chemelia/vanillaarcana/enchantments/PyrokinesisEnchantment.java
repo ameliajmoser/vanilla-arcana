@@ -46,7 +46,6 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
             Vec3 pos = user.getEyePosition().add(look.scale(0.9));
             Vec3 velocity = look.scale(0.3);
             Fireball fireball = new SmallFireball(world, user, 0,0,0);
-
             switch (spellLevel){
                 case 0:
                     return false;
@@ -70,19 +69,16 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
                 fireball.yPower = velocity.y;
                 fireball.zPower = velocity.z; 
                 world.addFreshEntity(fireball);
-
-                if (user instanceof Player){
-                    ((Player) user).getCooldowns().addCooldown(stack.getItem(), SPELL_COOLDOWN*spellLevel*spellLevel);
-                }
-            return true;
+                return true;
         } else return false;
     }
 
     //Increases the speed of any fireballs reflected - like lethal league for wizards!
+    //TODO: check if this actually works lol
     @Override
     public void doPostAttack(LivingEntity attacker, Entity target, int spellLevel){
         if (target instanceof Fireball){
-            target.setDeltaMovement(target.getDeltaMovement().scale(1.2));
+            target.setDeltaMovement(target.getDeltaMovement().scale(1.2 * spellLevel));
         }
     }
 }

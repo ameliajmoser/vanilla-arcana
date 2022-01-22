@@ -1,6 +1,7 @@
 package com.chemelia.vanillaarcana.entity.projectile;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
+import com.ibm.icu.impl.number.Properties;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -42,18 +44,16 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 
 public class ThrownBlock extends ThrowableItemProjectile implements IEntityAdditionalSpawnData {
-    private static final EntityDataAccessor<Byte> ID_LOYALTY = SynchedEntityData.defineId(ThrownBlock.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(ThrownBlock.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> HELD = SynchedEntityData.defineId(ThrownBlock.class, EntityDataSerializers.BOOLEAN);
 
     public int groundTime = 0;
     public boolean touchedGround = false;
+    private float gravity = 0.03F;
 
     //only client
-    public int clientSideReturnTridentTickCount;
     private float xRotInc;
     private float yRotInc;
-    private float particleCooldown = 0;
     public Lazy<Integer> light = Lazy.of(() -> {
         Item item = this.getItem().getItem();
         if (item instanceof BlockItem) {
@@ -63,11 +63,9 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
         return 0;
     });
 
-    public ThrownBlock(LivingEntity thrower, Level world, ItemStack item, ItemStack wand) {
+    public ThrownBlock(Level world, LivingEntity thrower, ItemStack item) {
         super(RegistryHandler.THROWN_BLOCK.get(), thrower, world);
         this.setItem(item);
-        this.entityData.set(ID_LOYALTY, (byte) EnchantmentHelper.getLoyalty(wand));
-
 
         this.yRotInc = (this.random.nextBoolean() ? 1 : -1) * (float) (4 * this.random.nextGaussian() + 7);
         this.xRotInc = (this.random.nextBoolean() ? 1 : -1) * (float) (4 * this.random.nextGaussian() + 7);
@@ -86,6 +84,10 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
         super(type, world);
     }
 
+    public ThrownBlock(Level world, LivingEntity thrower, BlockPos bPos){
+        this(world, thrower, new ItemStack(world.getBlockState(bPos).getBlock().asItem()));
+    }
+
     public boolean isNoPhysics(){
         if (!this.level.isClientSide()){
             return this.noPhysics;
@@ -96,19 +98,33 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
 
     @Override
     protected float getGravity(){
-        return 0.02F;
+        return this.gravity;
+    }
+    public void setGravity(float grav){
+        if (grav == 0){
+            grav = 0.01F;
+        }
+        this.gravity = grav;
     }
 
     @Override
     public boolean canBeCollidedWith(){
-        return this.isHeld() && this.isAlive();
+        return !this.isHeld() && this.isAlive();
     }
 
     @Override
     public void push(Entity entity){
-        if (!entity.is(this.getOwner())){
+        if (entity != this.getOwner()){
             super.push(entity);
         }
+    }
+
+
+    public float getBlockWeight(){
+        float resist = this.getBlock().getExplosionResistance();
+        if (resist > 0){
+            return resist;
+        } else return 1F;
     }
 
     @Override
@@ -119,25 +135,23 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(ID_LOYALTY, (byte) 0);
         this.entityData.define(HELD, false);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.entityData.set(ID_LOYALTY, tag.getByte("Loyalty"));
-        this.entityData.set(ID_LOYALTY, tag.getByte("Loyalty"));
         this.setHeld(tag.getBoolean("Held"));
     }
-    private void setHeld(Boolean bool){
+
+    public void setHeld(Boolean bool){
         this.entityData.set(HELD, bool);
     }
     public boolean isHeld(){
         return this.entityData.get(HELD);
     }
 
-    protected BlockState getBlock(){
+    protected BlockState getBlockState(){
         Item item = this.getItem().getItem();
         if (this.getItem().getItem() instanceof BlockItem){
             return ((BlockItem) item).getBlock().defaultBlockState();
@@ -146,19 +160,16 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
         }
     } 
 
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putByte("Loyalty", this.entityData.get(ID_LOYALTY));
+    private Block getBlock(){
+        return this.getBlockState().getBlock();
     }
 
-    public void setLoyalty(ItemStack stack) {
-        this.entityData.set(ID_LOYALTY, (byte) EnchantmentHelper.getLoyalty(stack));
-    }
 
     @Override
     protected Item getDefaultItem() {
         return Items.STONE;
     }
+
     protected BlockState getDefaultBlockState(){
         BlockItem item = (BlockItem) this.getDefaultItem();
         return item.getBlock().defaultBlockState();
@@ -166,14 +177,21 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
+        if (this.isHeld()){
+            return;
+        }
         //super.onHitEntity(result);
         Entity hitEntity = result.getEntity();
+        if (hitEntity == this.getOwner()){
+            return;
+        }
         //TODO: tune block damage
-        hitEntity.hurt(DamageSource.thrown(this, this.getOwner()), 4F);
-        this.level.addDestroyBlockEffect(new BlockPos(result.getLocation()), this.getBlock());
-        if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)){
+        hitEntity.hurt(DamageSource.thrown(this, this.getOwner()), 2.0F*this.getBlockWeight());
+        this.level.addDestroyBlockEffect(new BlockPos(result.getLocation()), this.getBlockState());
+        if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) && !this.level.isClientSide()){
             this.spawnAtLocation(this.getItem());
         }
+        this.remove(RemovalReason.DISCARDED);
     }
 
     @Override
@@ -205,8 +223,15 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
 
     @Override
     public void tick() {
-        if (this.isHeld()){
+        if (this.getOwner() != null && this.isHeld()){
+            Entity owner = this.getOwner();
+            if (owner instanceof Player){
+                if (EnchantmentHelper.getItemEnchantmentLevel(RegistryHandler.TELEKINESIS.get(), ((Player) owner).getItemInHand(InteractionHand.MAIN_HAND)) < 1){
+                    this.setHeld(false);
+                }
+            }
             //no rotation...?
+            //this.setRot(owner.getRotationVector().x, owner.getRotationVector().y);
             this.xOld = this.getX();
 			this.yOld = this.getY();
 			this.zOld = this.getZ();
@@ -214,10 +239,20 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
                 this.setSharedFlag(6, this.isCurrentlyGlowing());
             }
 
+            Vec3 holdPosition = owner.getEyePosition().add(owner.getLookAngle());
+            
+            if (owner.isAlive() && this.distanceToSqr(holdPosition) > 0.2){
+                Vec3 delta = this.position().vectorTo(holdPosition).normalize();
+                this.setDeltaMovement(delta.scale(0.8));
+            } else {
+                //this.setRot(owner.getXRot(), owner.getYRot());
+                this.setDeltaMovement(0,0,0);
+            }
+
             this.baseTick();
         }
         if (this.isNoPhysics()) {
-            int i = this.entityData.get(ID_LOYALTY);
+            int i = 0;
             Entity owner = this.getOwner();
             if (i > 0 && this.isAcceptableReturnOwner(owner)) {
                 Vec3 vector3d = new Vec3(owner.getX() - this.getX(), owner.getEyeY() - this.getY(), owner.getZ() - this.getZ());
@@ -228,8 +263,6 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
 
                 double d0 = 0.05D * (double) i;
                 this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vector3d.normalize().scale(d0)));
-
-                ++this.clientSideReturnTridentTickCount;
             }
         }
         super.tick();
@@ -243,6 +276,7 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
         }
     }
 
+    /*
     //this is for players to catch 
     @Override
     public void playerTouch(Player playerEntity) {
@@ -260,6 +294,7 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
             this.remove(RemovalReason.DISCARDED);
         }
     }
+    */
     
     public boolean hasReachedEndOfLife() {
         if (this.isNoGravity() && this.getDeltaMovement().lengthSqr() < 0.005) return true;
@@ -267,8 +302,8 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
     }
 
     public void reachedEndOfLife() {
-        if (this.entityData.get(ID_LOYALTY) != 0 && this.isAcceptableReturnOwner(this.getOwner())) {
-            this.setNoPhysics(true);
+        if (this.isAcceptableReturnOwner(this.getOwner())) {
+            // this.setNoPhysics(true);
             this.groundTime = 0;
         } else {
             this.spawnAtLocation(this.getItem(), 0.1f);
@@ -293,49 +328,15 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
 
     @Override
     protected void updateRotation() {
-
-        if (!this.isNoPhysics()) {
-            this.xRotO = this.getXRot();
-            this.yRotO = this.getYRot();
-            this.setXRot(this.getXRot() + xRotInc);
-            this.setYRot(this.getYRot() + yRotInc);
-            this.particleCooldown++;
-        } else {
+        // if (!this.isNoPhysics()) {
+        //     this.xRotO = this.getXRot();
+        //     this.yRotO = this.getYRot();
+        //     this.setXRot(this.getXRot() + xRotInc);
+        //     this.setYRot(this.getYRot() + yRotInc);
+        // } else {
             super.updateRotation();
-        }
+        // }
     }
-
-    // @Override
-    // public void spawnTrailParticles(Vec3 currentPos, Vec3 newPos) {
-    //     if (!this.isNoPhysics()) {
-    //         double d = this.getDeltaMovement().length();
-    //         if (this.tickCount > 1 && d * this.tickCount > 1.5) {
-    //             if (this.isNoGravity()) {
-
-    //                 Vec3 rot = new Vec3(0.325, 0, 0).yRot(this.tickCount * 0.32f);
-
-    //                 Vec3 movement = this.getDeltaMovement();
-    //                 Vec3 offset = changeBasis(movement, rot);
-
-    //                 double px = newPos.x + offset.x;
-    //                 double py = newPos.y + offset.y; //+ this.getBbHeight() / 2d;
-    //                 double pz = newPos.z + offset.z;
-
-    //                 movement = movement.scale(0.25);
-    //                 this.level.addParticle(ModRegistry.STASIS_PARTICLE.get(), px, py, pz, movement.x, movement.y, movement.z);
-    //             } else {
-    //                 double interval = 4 / (d * 0.95 + 0.05);
-    //                 if (this.particleCooldown > interval) {
-    //                     this.particleCooldown -= interval;
-    //                     double x = currentPos.x;
-    //                     double y = currentPos.y;//+ this.getBbHeight() / 2d;
-    //                     double z = currentPos.z;
-    //                     this.level.addParticle(ModRegistry.SLINGSHOT_PARTICLE.get(), x, y, z, 0, 0.01, 0);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
     private Vec3 changeBasis(Vec3 dir, Vec3 rot) {
         Vec3 y = dir.normalize();

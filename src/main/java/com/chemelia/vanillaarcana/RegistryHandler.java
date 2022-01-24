@@ -21,6 +21,7 @@ import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.ThrownBlock;
 import com.chemelia.vanillaarcana.item.WandItem;
 import com.chemelia.vanillaarcana.item.ChorusSproutItem;
+import com.chemelia.vanillaarcana.item.FocusCrystal;
 import com.google.common.base.Supplier;
 
 import net.minecraft.client.renderer.entity.BlazeRenderer;
@@ -35,6 +36,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
@@ -108,6 +110,13 @@ public class RegistryHandler {
     public static final RegistryObject<Item> PRISMARINE_WAND = ITEMS.register("prismarine_wand", () -> new WandItem(new Item.Properties()
         .stacksTo(1)
         .tab(CreativeModeTab.TAB_TOOLS), 20));
+
+    public static final RegistryObject<Item> ARCANE_FOCUS = ITEMS.register("arcane_focus", () -> new FocusCrystal(new Item.Properties()
+        .stacksTo(1)
+        .tab(CreativeModeTab.TAB_TOOLS)
+        .durability(128)
+        .defaultDurability(1)
+    ));
 
     //Entities
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, VanillaArcana.MOD_ID);

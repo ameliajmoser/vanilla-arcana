@@ -185,8 +185,7 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
         if (hitEntity == this.getOwner()){
             return;
         }
-        //TODO: tune block damage
-        hitEntity.hurt(DamageSource.thrown(this, this.getOwner()), 2.0F*this.getBlockWeight());
+        hitEntity.hurt(DamageSource.thrown(this, this.getOwner()), 2.0F + this.getBlockWeight()/2);
         this.level.addDestroyBlockEffect(new BlockPos(result.getLocation()), this.getBlockState());
         if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) && !this.level.isClientSide()){
             this.spawnAtLocation(this.getItem());
@@ -241,9 +240,9 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
 
             Vec3 holdPosition = owner.getEyePosition().add(owner.getLookAngle());
             
-            if (owner.isAlive() && this.distanceToSqr(holdPosition) > 0.2){
-                Vec3 delta = this.position().vectorTo(holdPosition).normalize();
-                this.setDeltaMovement(delta.scale(0.8));
+            if (owner.isAlive() && this.distanceToSqr(holdPosition) > 0.1){
+                Vec3 delta = this.position().vectorTo(holdPosition);
+                this.setDeltaMovement(delta.scale(0.1));
             } else {
                 //this.setRot(owner.getXRot(), owner.getYRot());
                 this.setDeltaMovement(0,0,0);

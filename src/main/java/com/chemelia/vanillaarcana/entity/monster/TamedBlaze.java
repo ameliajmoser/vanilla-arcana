@@ -1,8 +1,8 @@
 package com.chemelia.vanillaarcana.entity.monster;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 
 import java.util.EnumSet;
@@ -26,9 +26,10 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -41,38 +42,63 @@ import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.scores.Team;
 
-
 public class TamedBlaze extends Blaze implements SummonedEntity {
 
-    public TamedBlaze(EntityType<? extends Blaze> type, Level world) {
-        super(type, world);
-    }
+   public TamedBlaze(EntityType<? extends Blaze> type, Level world) {
+      super(type, world);
+   }
 
-    public TamedBlaze(EntityType<? extends Blaze> type, Level world, Player player) {
+   public TamedBlaze(EntityType<? extends Blaze> type, Level world, Player player) {
       this(type, world);
       tame(player);
    }
+
    public TamedBlaze(Level world, Player player) {
       this(RegistryHandler.TAMED_BLAZE.get(), world);
       tame(player);
    }
 
-    @Override
-    protected void registerGoals() {
-       this.goalSelector.addGoal(1, new BlazeAttackGoal(this));
-       this.goalSelector.addGoal(2, new FollowSummonerGoal(this, 1.0D, 12.0F, 1.0F, true));
-        this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.0F));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
-    }
-   
-   public static AttributeSupplier.Builder createAttributes() {
-      return Monster.createMonsterAttributes().add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.MOVEMENT_SPEED, (double)0.23F).add(Attributes.FOLLOW_RANGE, 48.0D);
+   @Override
+   protected void registerGoals() {
+      this.goalSelector.addGoal(1, new BlazeAttackGoal(this));
+      this.goalSelector.addGoal(2, new FollowSummonerGoal(this, 1.0D, 12.0F, 1.0F, true));
+      this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
+      this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.0F));
+      this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+      this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+      this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
+      this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));
+      this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
    }
+
+   /// This makes the necromancy mobs wither in sunlight
+   @Override
+   public void aiStep() {
+      boolean flag = this.isSunBurnTick();
+      if (flag) {
+         net.minecraft.world.item.ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
+         if (!itemstack.isEmpty()) {
+            if (itemstack.isDamageableItem()) {
+               itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
+               if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+                  this.broadcastBreakEvent(EquipmentSlot.HEAD);
+                  this.setItemSlot(EquipmentSlot.HEAD, net.minecraft.world.item.ItemStack.EMPTY);
+               }
+            }
+            flag = false;
+         }
+         if (flag) {
+            this.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1, true, false));
+         }
+      }
+      super.aiStep();
+   }
+
+   ////////////////////////////////////////
+   ////////////////////////////////////////
+   /////// BLAZE NONSENSE ////////////////
+   ////////////////////////////////////////
+   ////////////////////////////////////////
 
    public boolean isOnFire() {
       return this.isCharged();
@@ -81,13 +107,13 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
    private boolean isCharged() {
       return (this.entityData.get(DATA_FLAGS_ID) & 1) != 0;
    }
-   
+
    protected void setChargedTame(boolean pOnFire) {
       byte b0 = this.entityData.get(DATA_FLAGS_ID);
       if (pOnFire) {
-         b0 = (byte)(b0 | 1);
+         b0 = (byte) (b0 | 1);
       } else {
-         b0 = (byte)(b0 & -2);
+         b0 = (byte) (b0 & -2);
       }
 
       this.entityData.set(DATA_FLAGS_ID, b0);
@@ -105,7 +131,8 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
       }
 
       /**
-       * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
+       * Returns whether execution should begin. You can also read and cache any state
+       * necessary for execution in this
        * method as well.
        */
       public boolean canUse() {
@@ -121,7 +148,8 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
       }
 
       /**
-       * Reset the task's internal state. Called when this task is interrupted by another one
+       * Reset the task's internal state. Called when this task is interrupted by
+       * another one
        */
       public void stop() {
          this.blaze.setChargedTame(false);
@@ -157,7 +185,8 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
                   this.blaze.doHurtTarget(livingentity);
                }
 
-               this.blaze.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
+               this.blaze.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(),
+                     livingentity.getZ(), 1.0D);
             } else if (d0 < this.getFollowDistance() * this.getFollowDistance() && flag) {
                double d1 = livingentity.getX() - this.blaze.getX();
                double d2 = livingentity.getY(0.5D) - this.blaze.getY(0.5D);
@@ -176,15 +205,17 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
                   }
 
                   if (this.attackStep > 1) {
-                     //inaccuracy?
-                     //TODO: check this
+                     // inaccuracy?
+                     // TODO: check this
                      double d4 = Math.sqrt(Math.sqrt(d0)) * 0.2D;
                      if (!this.blaze.isSilent()) {
-                        this.blaze.level.levelEvent((Player)null, 1018, this.blaze.blockPosition(), 0);
+                        this.blaze.level.levelEvent((Player) null, 1018, this.blaze.blockPosition(), 0);
                      }
 
-                     for(int i = 0; i < 1; ++i) {
-                        SmallFireball smallfireball = new SmallFireball(this.blaze.level, this.blaze, d1 + this.blaze.getRandom().nextGaussian() * d4, d2, d3 + this.blaze.getRandom().nextGaussian() * d4);
+                     for (int i = 0; i < 1; ++i) {
+                        SmallFireball smallfireball = new SmallFireball(this.blaze.level, this.blaze,
+                              d1 + this.blaze.getRandom().nextGaussian() * d4, d2,
+                              d3 + this.blaze.getRandom().nextGaussian() * d4);
                         smallfireball.setPos(smallfireball.getX(), this.blaze.getY(0.5D) + 0.5D, smallfireball.getZ());
                         this.blaze.level.addFreshEntity(smallfireball);
                      }
@@ -192,7 +223,8 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
                }
                this.blaze.getLookControl().setLookAt(livingentity, 10.0F, 10.0F);
             } else if (this.lastSeen < 5) {
-               this.blaze.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
+               this.blaze.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(),
+                     livingentity.getZ(), 1.0D);
             }
             super.tick();
          }
@@ -203,11 +235,11 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
       }
    }
    //////////////////////////////////////////////////////////////
-   //////////////////////////////////////////////////////////////                                                   
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////
-   /// This should all be generic stuff for any tamed monster.///                                                     
+   //////////////////////////////////////////////////////////////
+   /// This should all be generic stuff for any tamed monster.///
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////
@@ -215,25 +247,28 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
    //////////////////////////////////////////////////////////////
 
    @Override
-   protected boolean shouldDropLoot(){
+   protected boolean shouldDropLoot() {
       return false;
    }
-   
-    protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamedBlaze.class, EntityDataSerializers.BYTE);
-    protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData.defineId(TamedBlaze.class, EntityDataSerializers.OPTIONAL_UUID);
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_FLAGS_ID, (byte)0);
-        this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
-     }
-    
-     public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        if (this.getOwnerUUID() != null) {
-           pCompound.putUUID("Owner", this.getOwnerUUID());
-        }
-     }
+   protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamedBlaze.class,
+         EntityDataSerializers.BYTE);
+   protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData
+         .defineId(TamedBlaze.class, EntityDataSerializers.OPTIONAL_UUID);
+
+   protected void defineSynchedData() {
+      super.defineSynchedData();
+      this.entityData.define(DATA_FLAGS_ID, (byte) 0);
+      this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
+   }
+
+   public void addAdditionalSaveData(CompoundTag pCompound) {
+      super.addAdditionalSaveData(pCompound);
+      if (this.getOwnerUUID() != null) {
+         pCompound.putUUID("Owner", this.getOwnerUUID());
+      }
+   }
+
    /**
     * (abstract) Protected helper method to read subclass entity data from NBT.
     */
@@ -258,18 +293,18 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
 
    public boolean canBeLeashed(Player pPlayer) {
       return !this.isLeashed();
-  }
+   }
 
-  public boolean isTame() {
+   public boolean isTame() {
       return (this.entityData.get(DATA_FLAGS_ID) & 4) != 0;
    }
 
    public void setTame(boolean pTamed) {
       byte b0 = this.entityData.get(DATA_FLAGS_ID);
       if (pTamed) {
-         this.entityData.set(DATA_FLAGS_ID, (byte)(b0 | 4));
+         this.entityData.set(DATA_FLAGS_ID, (byte) (b0 | 4));
       } else {
-         this.entityData.set(DATA_FLAGS_ID, (byte)(b0 & -5));
+         this.entityData.set(DATA_FLAGS_ID, (byte) (b0 & -5));
       }
 
       this.reassessTameGoals();
@@ -278,88 +313,88 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
    protected void reassessTameGoals() {
    }
 
-   
- @Nullable
- public UUID getOwnerUUID() {
-    return this.entityData.get(DATA_OWNERUUID_ID).orElse((UUID)null);
- }
+   @Nullable
+   public UUID getOwnerUUID() {
+      return this.entityData.get(DATA_OWNERUUID_ID).orElse((UUID) null);
+   }
 
- public void setOwnerUUID(@Nullable UUID p_21817_) {
-    this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(p_21817_));
- }
+   public void setOwnerUUID(@Nullable UUID p_21817_) {
+      this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(p_21817_));
+   }
 
- public void tame(Player pPlayer) {
-    this.setTame(true);
-    this.setOwnerUUID(pPlayer.getUUID());
-    if (pPlayer instanceof ServerPlayer) {
-       CriteriaTriggers.SUMMONED_ENTITY.trigger((ServerPlayer)pPlayer, this);
-    }
- }
+   public void tame(Player pPlayer) {
+      this.setTame(true);
+      this.setOwnerUUID(pPlayer.getUUID());
+      if (pPlayer instanceof ServerPlayer) {
+         CriteriaTriggers.SUMMONED_ENTITY.trigger((ServerPlayer) pPlayer, this);
+      }
+   }
 
- @Nullable
- public LivingEntity getSummoner() {
-    try {
-       UUID uuid = this.getOwnerUUID();
-       return uuid == null ? null : this.level.getPlayerByUUID(uuid);
-    } catch (IllegalArgumentException illegalargumentexception) {
-       return null;
-    }
- }
+   @Nullable
+   public LivingEntity getSummoner() {
+      try {
+         UUID uuid = this.getOwnerUUID();
+         return uuid == null ? null : this.level.getPlayerByUUID(uuid);
+      } catch (IllegalArgumentException illegalargumentexception) {
+         return null;
+      }
+   }
 
- public boolean canAttack(LivingEntity pTarget) {
-    return this.isOwnedBy(pTarget) ? false : super.canAttack(pTarget);
- }
+   public boolean canAttack(LivingEntity pTarget) {
+      return this.isOwnedBy(pTarget) ? false : super.canAttack(pTarget);
+   }
 
- public boolean isOwnedBy(LivingEntity pEntity) {
-    return pEntity == this.getSummoner();
- }
+   public boolean isOwnedBy(LivingEntity pEntity) {
+      return pEntity == this.getSummoner();
+   }
 
- public boolean wantsToAttack(LivingEntity pTarget, LivingEntity pOwner) {
-    return true;
- }
+   public boolean wantsToAttack(LivingEntity pTarget, LivingEntity pOwner) {
+      return true;
+   }
 
- public Team getTeam() {
-    if (this.isTame()) {
-       LivingEntity livingentity = this.getSummoner();
-       if (livingentity != null) {
-          return livingentity.getTeam();
-       }
-    }
+   public Team getTeam() {
+      if (this.isTame()) {
+         LivingEntity livingentity = this.getSummoner();
+         if (livingentity != null) {
+            return livingentity.getTeam();
+         }
+      }
 
-    return super.getTeam();
- }
+      return super.getTeam();
+   }
 
- /**
-  * Returns whether this Entity is on the same team as the given Entity.
-  */
- public boolean isAlliedTo(Entity pEntity) {
-    if (this.isTame()) {
-       LivingEntity livingentity = this.getSummoner();
-       if (pEntity == livingentity) {
-          return true;
-       }
+   /**
+    * Returns whether this Entity is on the same team as the given Entity.
+    */
+   public boolean isAlliedTo(Entity pEntity) {
+      if (this.isTame()) {
+         LivingEntity livingentity = this.getSummoner();
+         if (pEntity == livingentity) {
+            return true;
+         }
 
-       if (livingentity != null) {
-          return livingentity.isAlliedTo(pEntity);
-       }
-    }
+         if (livingentity != null) {
+            return livingentity.isAlliedTo(pEntity);
+         }
+      }
 
-    return super.isAlliedTo(pEntity);
- }
+      return super.isAlliedTo(pEntity);
+   }
 
- /**
-  * Called when the mob's health reaches 0.
-  */
- public void die(DamageSource pCause) {
-    // FORGE: Super moved to top so that death message would be cancelled properly
-    net.minecraft.network.chat.Component deathMessage = this.getCombatTracker().getDeathMessage();
-    super.die(pCause);
+   /**
+    * Called when the mob's health reaches 0.
+    */
+   public void die(DamageSource pCause) {
+      // FORGE: Super moved to top so that death message would be cancelled properly
+      net.minecraft.network.chat.Component deathMessage = this.getCombatTracker().getDeathMessage();
+      super.die(pCause);
 
-    if (this.dead)
-    if (!this.level.isClientSide && this.level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getSummoner() instanceof ServerPlayer) {
-       this.getSummoner().sendMessage(deathMessage, Util.NIL_UUID);
-    }
- }
- 
-   //END generic tamed monster stuff  
+      if (this.dead)
+         if (!this.level.isClientSide && this.level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES)
+               && this.getSummoner() instanceof ServerPlayer) {
+            this.getSummoner().sendMessage(deathMessage, Util.NIL_UUID);
+         }
+   }
+
+   // END generic tamed monster stuff
 }

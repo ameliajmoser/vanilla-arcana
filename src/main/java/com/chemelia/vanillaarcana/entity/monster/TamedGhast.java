@@ -2,6 +2,7 @@ package com.chemelia.vanillaarcana.entity.monster;
 
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -29,9 +30,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 // import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -70,6 +72,32 @@ public class TamedGhast extends Ghast implements SummonedEntity {
       this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));
       //this.targetSelector.addGoal(3, ( new HurtByTargetGoal(this) ).setAlertOthers());
    }
+
+
+
+           ///This makes the necromancy mobs wither in sunlight
+           @Override
+           public void aiStep(){
+              boolean flag = this.isSunBurnTick();
+              if (flag) {
+                 net.minecraft.world.item.ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
+                 if (!itemstack.isEmpty()) {
+                    if (itemstack.isDamageableItem()) {
+                       itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
+                       if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+                          this.broadcastBreakEvent(EquipmentSlot.HEAD);
+                          this.setItemSlot(EquipmentSlot.HEAD, net.minecraft.world.item.ItemStack.EMPTY);
+                       }
+                    }
+                    flag = false;
+                 }
+                 if (flag) {
+                    this.addEffect(new MobEffectInstance(MobEffects.WITHER, 20, 1, true, false));
+                 }
+              }
+              super.aiStep();
+           }
+           
 
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////

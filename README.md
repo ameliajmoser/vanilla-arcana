@@ -8,4 +8,5 @@ enchant wands with one of 10 spells. cast them using your XP.
 - focus crystals which allow you to store and channel XP (at your own risk)
 
 [CurseForge](https://www.curseforge.com/minecraft/mc-mods/vanilla-arcana-forge)
+
 [Modrinth](https://modrinth.com/mod/vanilla_arcana)

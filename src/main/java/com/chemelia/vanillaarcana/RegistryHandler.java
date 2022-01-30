@@ -1,6 +1,7 @@
 package com.chemelia.vanillaarcana;
 
 import com.chemelia.vanillaarcana.block.AegisBlock;
+import com.chemelia.vanillaarcana.client.renderer.entity.BabyGhastRenderer;
 import com.chemelia.vanillaarcana.client.renderer.entity.ThrownBlockRenderer;
 import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
@@ -14,7 +15,10 @@ import com.chemelia.vanillaarcana.enchantments.TelekinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
 import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 import com.chemelia.vanillaarcana.entity.monster.TamedBlaze;
+import com.chemelia.vanillaarcana.entity.monster.TamedEndermite;
+import com.chemelia.vanillaarcana.entity.monster.TamedGhast;
 import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
+import com.chemelia.vanillaarcana.entity.monster.TamedVex;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
@@ -25,7 +29,9 @@ import com.chemelia.vanillaarcana.item.FocusCrystal;
 import com.google.common.base.Supplier;
 
 import net.minecraft.client.renderer.entity.BlazeRenderer;
+import net.minecraft.client.renderer.entity.EndermiteRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
+import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.client.renderer.entity.WitherSkeletonRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -33,10 +39,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
@@ -75,10 +79,10 @@ public class RegistryHandler {
     }
     
     
-    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block) {
-        ITEMS.register(name, () -> new BlockItem(block .get(),
-                new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    }
+    // private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block) {
+    //     ITEMS.register(name, () -> new BlockItem(block .get(),
+    //             new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    // }
 
     public static final RegistryObject<Block> AEGIS_BLOCK = registerBlock("aegis_block", ()-> new AegisBlock(BlockBehaviour.Properties
         .of(Material.GLASS)
@@ -149,6 +153,9 @@ public class RegistryHandler {
     public static final RegistryObject<EntityType<TamedWitherSkeleton>> TAMED_WITHER_SKELETON = createTamedMonster("tamed_wither_skeleton", TamedWitherSkeleton::new, 0.7F, 2.4F);
     //public static final RegistryObject<EntityType<TamedPhantom>> TAMED_PHANTOM = createTamedMonster("tamed_phantom", TamedPhantom::new, 0.9F, 0.5F);
     public static final RegistryObject<EntityType<TamedBlaze>> TAMED_BLAZE = createTamedMonster("tamed_blaze", TamedBlaze::new, 0.6F, 1.8F);
+    public static final RegistryObject<EntityType<TamedEndermite>> TAMED_ENDERMITE = createTamedMonster("tamed_endermite", TamedEndermite::new, 0.4F, 0.3F);
+    public static final RegistryObject<EntityType<TamedVex>> TAMED_VEX = createTamedMonster("tamed_vex", TamedVex::new, 0.4F, 0.8F);
+    public static final RegistryObject<EntityType<TamedGhast>> TAMED_GHAST = createTamedMonster("tamed_ghast", TamedGhast::new, 4.0F, 4.0F);
 
 
     private static <T extends LivingEntity> RegistryObject<EntityType<T>> createTamedMonster(String name, EntityType.EntityFactory<T> factory, float width, float height){
@@ -169,6 +176,10 @@ public class RegistryHandler {
         //event.put(TAMED_PHANTOM.get(), TamedWitherSkeleton.createAttributes().build());
         event.put(TAMED_WITHER_SKELETON.get(), TamedWitherSkeleton.createAttributes().build());
         event.put(TAMED_BLAZE.get(), TamedBlaze.createAttributes().build());
+        event.put(TAMED_VEX.get(), TamedVex.createAttributes().build());
+        event.put(TAMED_ENDERMITE.get(), TamedEndermite.createAttributes().build());
+        event.put(TAMED_GHAST.get(), TamedGhast.createAttributes().build());
+
     }
 
     @SubscribeEvent
@@ -178,6 +189,14 @@ public class RegistryHandler {
        //event.registerEntityRenderer(TAMED_PHANTOM.get(), PhantomRenderer::new);
        event.registerEntityRenderer(TAMED_WITHER_SKELETON.get(), WitherSkeletonRenderer::new);
        event.registerEntityRenderer(TAMED_BLAZE.get(), BlazeRenderer::new);
+       event.registerEntityRenderer(TAMED_ENDERMITE.get(), EndermiteRenderer::new);
+       event.registerEntityRenderer(TAMED_VEX.get(), VexRenderer::new);
+       event.registerEntityRenderer(TAMED_GHAST.get(), BabyGhastRenderer::new);
+
+
+
+
+
        event.registerEntityRenderer(THROWN_BLOCK.get(), ThrownBlockRenderer::new);
     }
 

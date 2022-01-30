@@ -2,11 +2,11 @@ package com.chemelia.vanillaarcana.entity.goal;
 
 import java.util.EnumSet;
 
+import com.chemelia.vanillaarcana.interfaces.SummonedEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -23,7 +23,7 @@ public class FollowSummonerGoal extends Goal {
    // private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
    // private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
    private final Mob monster;
-   private final OwnableEntity ownableMonster;
+   private final SummonedEntity ownableMonster;
    private final LevelReader level;
    private LivingEntity owner;
    private final double speedModifier;
@@ -36,7 +36,7 @@ public class FollowSummonerGoal extends Goal {
    
    public FollowSummonerGoal(Mob monster, double speedModifier, float startDistance, float stopDistance, boolean canFly){
        this.monster = monster;
-       this.ownableMonster = ((OwnableEntity) monster);
+       this.ownableMonster = ((SummonedEntity) monster);
        this.level = monster.getLevel();
        this.speedModifier = speedModifier;
        this.navigation = monster.getNavigation();
@@ -56,7 +56,7 @@ public class FollowSummonerGoal extends Goal {
     * method as well.
     */
     public boolean canUse() {
-      LivingEntity owner = (LivingEntity) this.ownableMonster.getOwner();
+      LivingEntity owner = (LivingEntity) this.ownableMonster.getSummoner();
         if (owner == null) {
            return false;
         } else if (owner.isSpectator()) {

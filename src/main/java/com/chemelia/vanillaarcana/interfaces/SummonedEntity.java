@@ -5,11 +5,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.LivingEntity;
 
-public interface VAOwnableEntity {
+public interface SummonedEntity {
 
    @Nullable
    UUID getOwnerUUID();
 
    @Nullable
-   LivingEntity getOwner();
+   LivingEntity getSummoner();
 }

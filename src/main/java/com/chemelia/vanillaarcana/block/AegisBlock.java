@@ -6,7 +6,6 @@ import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,11 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class AegisBlock extends StainedGlassPaneBlock {
 
     public static final int DEFAULT_LIFETIME = 60;
-    private int lifetime;
-
     public AegisBlock(BlockBehaviour.Properties props, int lifetime){
         super(DyeColor.CYAN, props);
-        this.lifetime = lifetime;
     }
 
     public AegisBlock(BlockBehaviour.Properties props){
@@ -26,7 +22,6 @@ public class AegisBlock extends StainedGlassPaneBlock {
     }
 
     public void setLifetime(int time){
-        this.lifetime = time;
     }
 
     // public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {

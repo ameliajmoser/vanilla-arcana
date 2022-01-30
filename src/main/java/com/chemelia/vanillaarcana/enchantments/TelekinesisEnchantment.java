@@ -21,7 +21,7 @@ public class TelekinesisEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 30;
     private final static int SPELL_COST = 10;
     private final static int MAX_LEVEL = 5;
-    private final static int PROJECTILE_SPEED = 1;
+    //private final static int PROJECTILE_SPEED = 1;
     private final static int RANGE = 10;
     public static final String ID = VanillaArcana.MOD_ID + ":telekinesis";
 

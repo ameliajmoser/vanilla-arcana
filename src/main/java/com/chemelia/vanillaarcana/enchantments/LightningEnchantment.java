@@ -4,9 +4,7 @@ import com.chemelia.vanillaarcana.VanillaArcana;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 /////////////
 //LIGHTNING//
 /////////////
@@ -30,13 +28,11 @@ public class LightningEnchantment extends SpellEnchantment {
     @Override
     public boolean handleCast(Level world, LivingEntity user, ItemStack stack){
         if (super.handleCast(world, user, stack)){
-            int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
-            Vec3 look = user.getLookAngle();
-            Vec3 pos = user.getEyePosition().add(look.scale(0.9));
+            //int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
+            //Vec3 look = user.getLookAngle();
+            //Vec3 pos = user.getEyePosition().add(look.scale(0.9));
 
             return true;
         } else return false;
     }
-
-    
 }

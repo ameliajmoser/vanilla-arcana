@@ -13,6 +13,10 @@
     "entity.vanillaarcana.tamed_zombie": "Risen Zombie",
     "entity.vanillaarcana.tamed_skeleton": "Risen Skeleton",
     "entity.vanillaarcana.tamed_wither_skeleton": "Risen Wither Skeleton",
+    "entity.vanillaarcana.tamed_blaze": "Summoned Blaze",
+    "entity.vanillaarcana.tamed_endermite": "Summoned Endermite",
+    "entity.vanillaarcana.tamed_vex": "Summoned Vex",
+
     
     "block.vanillaarcana.aegis_block": "Aegis Block",
 

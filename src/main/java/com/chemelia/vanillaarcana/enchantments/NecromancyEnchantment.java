@@ -5,6 +5,7 @@ import java.util.Random;
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
 import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
+import com.chemelia.vanillaarcana.interfaces.SummonedEntity;
 import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 
@@ -56,7 +57,7 @@ public class NecromancyEnchantment extends SpellEnchantment {
                         case 3:
                             // i should probably make a method for this huh
                             if (mob instanceof WitherSkeleton) {
-                                if (!(mob instanceof OwnableEntity)) {
+                                if (!(mob instanceof SummonedEntity)) {
                                     mob.convertTo(RegistryHandler.TAMED_WITHER_SKELETON.get(), true);
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
@@ -68,7 +69,7 @@ public class NecromancyEnchantment extends SpellEnchantment {
                             }
                         case 2:
                             if (mob instanceof Skeleton) {
-                                if (!(mob instanceof OwnableEntity)) {
+                                if (!(mob instanceof SummonedEntity)) {
                                     mob.convertTo(RegistryHandler.TAMED_SKELETON.get(), true);
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
@@ -80,7 +81,7 @@ public class NecromancyEnchantment extends SpellEnchantment {
                             }
                         case 1:
                             if (mob instanceof Zombie) {
-                                if (!(mob instanceof OwnableEntity)) {
+                                if (!(mob instanceof SummonedEntity)) {
                                     mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;

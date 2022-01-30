@@ -1,11 +1,9 @@
 package com.chemelia.vanillaarcana.entity.monster;
 
+import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,181 +26,51 @@ import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.scores.Team;
 
+public class TamedEndermite extends Endermite implements SummonedEntity {
 
-public class TamedBlaze extends Blaze implements SummonedEntity {
+    public TamedEndermite(Level world) {
+        super(RegistryHandler.TAMED_ENDERMITE.get(), world);
+    }
 
-    public TamedBlaze(EntityType<? extends Blaze> type, Level world) {
+    public TamedEndermite(EntityType<? extends TamedEndermite> type, Level world) {
         super(type, world);
     }
 
-    public TamedBlaze(EntityType<? extends Blaze> type, Level world, Player player) {
-      this(type, world);
-      tame(player);
-   }
-   public TamedBlaze(Level world, Player player) {
-      this(RegistryHandler.TAMED_BLAZE.get(), world);
-      tame(player);
-   }
+    public TamedEndermite(EntityType<? extends TamedEndermite> type, Level world, Player player) {
+        this(type, world);
+        tame(player);
+    }
+
+    public TamedEndermite(Level world, Player player) {
+        this(RegistryHandler.TAMED_ENDERMITE.get(), world);
+        tame(player);
+    }
 
     @Override
     protected void registerGoals() {
-       this.goalSelector.addGoal(1, new BlazeAttackGoal(this));
-       this.goalSelector.addGoal(2, new FollowSummonerGoal(this, 1.0D, 12.0F, 1.0F, true));
-        this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.0F));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        // this.goalSelector.addGoal(2, new LeapAtTargetGoal(this, 0.4F));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.5D, false));
+        this.goalSelector.addGoal(3, new FollowSummonerGoal(this, 1.0D, 12.0F, 1.0F, true));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new SummonerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new SummonerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
     }
-   
-   public static AttributeSupplier.Builder createAttributes() {
-      return Monster.createMonsterAttributes().add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.MOVEMENT_SPEED, (double)0.23F).add(Attributes.FOLLOW_RANGE, 48.0D);
-   }
 
-   public boolean isOnFire() {
-      return this.isCharged();
-   }
-
-   private boolean isCharged() {
-      return (this.entityData.get(DATA_FLAGS_ID) & 1) != 0;
-   }
-   
-   protected void setChargedTame(boolean pOnFire) {
-      byte b0 = this.entityData.get(DATA_FLAGS_ID);
-      if (pOnFire) {
-         b0 = (byte)(b0 | 1);
-      } else {
-         b0 = (byte)(b0 & -2);
-      }
-
-      this.entityData.set(DATA_FLAGS_ID, b0);
-   }
-
-   class BlazeAttackGoal extends Goal {
-      private final TamedBlaze blaze;
-      private int attackStep;
-      private int attackTime;
-      private int lastSeen;
-
-      public BlazeAttackGoal(TamedBlaze p_32247_) {
-         this.blaze = p_32247_;
-         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-      }
-
-      /**
-       * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-       * method as well.
-       */
-      public boolean canUse() {
-         LivingEntity livingentity = this.blaze.getTarget();
-         return livingentity != null && livingentity.isAlive() && this.blaze.canAttack(livingentity);
-      }
-
-      /**
-       * Execute a one shot task or start executing a continuous task
-       */
-      public void start() {
-         this.attackStep = 0;
-      }
-
-      /**
-       * Reset the task's internal state. Called when this task is interrupted by another one
-       */
-      public void stop() {
-         this.blaze.setChargedTame(false);
-         this.lastSeen = 0;
-      }
-
-      public boolean requiresUpdateEveryTick() {
-         return true;
-      }
-
-      /**
-       * Keep ticking a continuous task that has already been started
-       */
-      public void tick() {
-         --this.attackTime;
-         LivingEntity livingentity = this.blaze.getTarget();
-         if (livingentity != null) {
-            boolean flag = this.blaze.getSensing().hasLineOfSight(livingentity);
-            if (flag) {
-               this.lastSeen = 0;
-            } else {
-               ++this.lastSeen;
-            }
-
-            double d0 = this.blaze.distanceToSqr(livingentity);
-            if (d0 < 4.0D) {
-               if (!flag) {
-                  return;
-               }
-
-               if (this.attackTime <= 0) {
-                  this.attackTime = 20;
-                  this.blaze.doHurtTarget(livingentity);
-               }
-
-               this.blaze.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
-            } else if (d0 < this.getFollowDistance() * this.getFollowDistance() && flag) {
-               double d1 = livingentity.getX() - this.blaze.getX();
-               double d2 = livingentity.getY(0.5D) - this.blaze.getY(0.5D);
-               double d3 = livingentity.getZ() - this.blaze.getZ();
-               if (this.attackTime <= 0) {
-                  ++this.attackStep;
-                  if (this.attackStep == 1) {
-                     this.attackTime = 60;
-                     this.blaze.setChargedTame(true);
-                  } else if (this.attackStep <= 4) {
-                     this.attackTime = 6;
-                  } else {
-                     this.attackTime = 100;
-                     this.attackStep = 0;
-                     this.blaze.setChargedTame(false);
-                  }
-
-                  if (this.attackStep > 1) {
-                     //inaccuracy?
-                     //TODO: check this
-                     double d4 = Math.sqrt(Math.sqrt(d0)) * 0.2D;
-                     if (!this.blaze.isSilent()) {
-                        this.blaze.level.levelEvent((Player)null, 1018, this.blaze.blockPosition(), 0);
-                     }
-
-                     for(int i = 0; i < 1; ++i) {
-                        SmallFireball smallfireball = new SmallFireball(this.blaze.level, this.blaze, d1 + this.blaze.getRandom().nextGaussian() * d4, d2, d3 + this.blaze.getRandom().nextGaussian() * d4);
-                        smallfireball.setPos(smallfireball.getX(), this.blaze.getY(0.5D) + 0.5D, smallfireball.getZ());
-                        this.blaze.level.addFreshEntity(smallfireball);
-                     }
-                  }
-               }
-               this.blaze.getLookControl().setLookAt(livingentity, 10.0F, 10.0F);
-            } else if (this.lastSeen < 5) {
-               this.blaze.getMoveControl().setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), 1.0D);
-            }
-            super.tick();
-         }
-      }
-
-      private double getFollowDistance() {
-         return this.blaze.getAttributeValue(Attributes.FOLLOW_RANGE);
-      }
-   }
-   //////////////////////////////////////////////////////////////
+     //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////                                                   
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////
@@ -219,8 +87,8 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
       return false;
    }
    
-    protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamedBlaze.class, EntityDataSerializers.BYTE);
-    protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData.defineId(TamedBlaze.class, EntityDataSerializers.OPTIONAL_UUID);
+    protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamedEndermite.class, EntityDataSerializers.BYTE);
+    protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData.defineId(TamedEndermite.class, EntityDataSerializers.OPTIONAL_UUID);
 
     protected void defineSynchedData() {
         super.defineSynchedData();

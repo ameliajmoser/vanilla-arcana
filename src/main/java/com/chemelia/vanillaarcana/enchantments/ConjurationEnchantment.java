@@ -4,9 +4,10 @@ import java.util.Random;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
 import com.chemelia.vanillaarcana.VanillaArcana;
-import com.chemelia.vanillaarcana.entity.monster.TamedZombie;
 import com.chemelia.vanillaarcana.entity.monster.TamedBlaze;
-import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
+import com.chemelia.vanillaarcana.entity.monster.TamedEndermite;
+import com.chemelia.vanillaarcana.entity.monster.TamedVex;
+import com.chemelia.vanillaarcana.interfaces.SummonedEntity;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.InteractionHand;
@@ -15,8 +16,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.Endermite;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -29,7 +30,7 @@ import net.minecraft.world.phys.HitResult.Type;
 
 public class ConjurationEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 30;
-    public static final int SPELL_COST = 50;
+    public static final int SPELL_COST = 10;
     private final static int MAX_LEVEL = 3;
     private static final int RANGE = 5;
     protected final Random random = new Random();
@@ -56,7 +57,7 @@ public class ConjurationEnchantment extends SpellEnchantment {
                         case 3:
                             // i should probably make a method for this huh
                             if (mob instanceof Blaze) {
-                                if (!(mob instanceof OwnableEntity)) {
+                                if (!(mob instanceof SummonedEntity)) {
                                     mob.convertTo(RegistryHandler.TAMED_BLAZE.get(), true);
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
@@ -67,26 +68,26 @@ public class ConjurationEnchantment extends SpellEnchantment {
                                 success = true;
                             }
                         case 2:
-                            if (mob instanceof Skeleton) {
-                                if (!(mob instanceof OwnableEntity)) {
-                                    mob.convertTo(RegistryHandler.TAMED_SKELETON.get(), true);
+                            if (mob instanceof Vex) {
+                                if (!(mob instanceof SummonedEntity)) {
+                                    mob.convertTo(RegistryHandler.TAMED_VEX.get(), true);
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
                                 }
                                 spawnTameParticles(attacker.level, target.getEyePosition());
-                                ((TamedSkeleton) mob).tame((Player) attacker);
+                                ((TamedVex) mob).tame((Player) attacker);
                                 mob.lookAt(attacker, 180, 180);
                                 success = true;
                             }
                         case 1:
-                            if (mob instanceof Zombie) {
-                                if (!(mob instanceof OwnableEntity)) {
-                                    mob.convertTo(RegistryHandler.TAMED_ZOMBIE.get(), true);
+                            if (mob instanceof Endermite) {
+                                if (!(mob instanceof SummonedEntity)) {
+                                    mob.convertTo(RegistryHandler.TAMED_ENDERMITE.get(), true);
                                 } else if (((OwnableEntity) mob).getOwnerUUID() == player.getUUID()) {
                                     break;
                                 }
                                 spawnTameParticles(attacker.level, target.getEyePosition());
-                                ((TamedZombie) mob).tame((Player) attacker);
+                                ((TamedEndermite) mob).tame((Player) attacker);
                                 mob.lookAt(attacker, 180, 180);
                                 success = true;
                             }
@@ -120,13 +121,13 @@ public class ConjurationEnchantment extends SpellEnchantment {
                 Mob monster = null;
                 switch (spellLevel) {
                     case 1:
-                        //monster = new TamedZombie(RegistryHandler.TAMED_ZOMBIE.get(), world, player);
+                        monster = new TamedEndermite(world, player);
                         break;
                     case 2:
-                        //monster = new TamedSkeleton(RegistryHandler.TAMED_SKELETON.get(), world, player);
+                        monster = new TamedVex(world, player);
                         break;
                     case 3:
-                        monster = new TamedBlaze(RegistryHandler.TAMED_BLAZE.get(), world, player);
+                        monster = new TamedBlaze(world, player);
                         break;
                 }
                 monster.setPos(cast.getLocation());

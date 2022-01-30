@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import com.chemelia.vanillaarcana.entity.goal.FollowSummonerGoal;
 import com.chemelia.vanillaarcana.entity.goal.SummonerHurtByTargetGoal;
 import com.chemelia.vanillaarcana.entity.goal.SummonerHurtTargetGoal;
+import com.chemelia.vanillaarcana.interfaces.SummonedEntity;
 
 import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.ZombieAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -34,7 +34,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
 
-public class TamedZombie extends Zombie implements OwnableEntity {
+public class TamedZombie extends Zombie implements SummonedEntity {
 
    public TamedZombie(Level world) {
       super(world);
@@ -108,143 +108,143 @@ public class TamedZombie extends Zombie implements OwnableEntity {
     protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData.defineId(TamedZombie.class, EntityDataSerializers.OPTIONAL_UUID);
 
     protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_FLAGS_ID, (byte)0);
-        this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
-     }
-    
-     public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        if (this.getOwnerUUID() != null) {
-           pCompound.putUUID("Owner", this.getOwnerUUID());
-        }
-     }
-   /**
-    * (abstract) Protected helper method to read subclass entity data from NBT.
-    */
-   public void readAdditionalSaveData(CompoundTag pCompound) {
-      super.readAdditionalSaveData(pCompound);
-      UUID uuid;
-      if (pCompound.hasUUID("Owner")) {
-         uuid = pCompound.getUUID("Owner");
-      } else {
-         String s = pCompound.getString("Owner");
-         uuid = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
-      }
-      if (uuid != null) {
-         try {
-            this.setOwnerUUID(uuid);
-            this.setTame(true);
-         } catch (Throwable throwable) {
-            this.setTame(false);
-         }
+      super.defineSynchedData();
+      this.entityData.define(DATA_FLAGS_ID, (byte)0);
+      this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
+   }
+  
+   public void addAdditionalSaveData(CompoundTag pCompound) {
+      super.addAdditionalSaveData(pCompound);
+      if (this.getOwnerUUID() != null) {
+         pCompound.putUUID("Owner", this.getOwnerUUID());
       }
    }
+ /**
+  * (abstract) Protected helper method to read subclass entity data from NBT.
+  */
+ public void readAdditionalSaveData(CompoundTag pCompound) {
+    super.readAdditionalSaveData(pCompound);
+    UUID uuid;
+    if (pCompound.hasUUID("Owner")) {
+       uuid = pCompound.getUUID("Owner");
+    } else {
+       String s = pCompound.getString("Owner");
+       uuid = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
+    }
+    if (uuid != null) {
+       try {
+          this.setOwnerUUID(uuid);
+          this.setTame(true);
+       } catch (Throwable throwable) {
+          this.setTame(false);
+       }
+    }
+ }
 
-   public boolean canBeLeashed(Player pPlayer) {
-      return !this.isLeashed();
+ public boolean canBeLeashed(Player pPlayer) {
+    return !this.isLeashed();
+}
+
+public boolean isTame() {
+    return (this.entityData.get(DATA_FLAGS_ID) & 4) != 0;
+ }
+
+ public void setTame(boolean pTamed) {
+    byte b0 = this.entityData.get(DATA_FLAGS_ID);
+    if (pTamed) {
+       this.entityData.set(DATA_FLAGS_ID, (byte)(b0 | 4));
+    } else {
+       this.entityData.set(DATA_FLAGS_ID, (byte)(b0 & -5));
+    }
+
+    this.reassessTameGoals();
+ }
+
+ protected void reassessTameGoals() {
+ }
+
+ 
+@Nullable
+public UUID getOwnerUUID() {
+  return this.entityData.get(DATA_OWNERUUID_ID).orElse((UUID)null);
+}
+
+public void setOwnerUUID(@Nullable UUID p_21817_) {
+  this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(p_21817_));
+}
+
+public void tame(Player pPlayer) {
+  this.setTame(true);
+  this.setOwnerUUID(pPlayer.getUUID());
+  if (pPlayer instanceof ServerPlayer) {
+     CriteriaTriggers.SUMMONED_ENTITY.trigger((ServerPlayer)pPlayer, this);
+  }
+}
+
+@Nullable
+public LivingEntity getSummoner() {
+  try {
+     UUID uuid = this.getOwnerUUID();
+     return uuid == null ? null : this.level.getPlayerByUUID(uuid);
+  } catch (IllegalArgumentException illegalargumentexception) {
+     return null;
+  }
+}
+
+public boolean canAttack(LivingEntity pTarget) {
+  return this.isOwnedBy(pTarget) ? false : super.canAttack(pTarget);
+}
+
+public boolean isOwnedBy(LivingEntity pEntity) {
+  return pEntity == this.getSummoner();
+}
+
+public boolean wantsToAttack(LivingEntity pTarget, LivingEntity pOwner) {
+  return true;
+}
+
+public Team getTeam() {
+  if (this.isTame()) {
+     LivingEntity livingentity = this.getSummoner();
+     if (livingentity != null) {
+        return livingentity.getTeam();
+     }
   }
 
-  public boolean isTame() {
-      return (this.entityData.get(DATA_FLAGS_ID) & 4) != 0;
-   }
+  return super.getTeam();
+}
 
-   public void setTame(boolean pTamed) {
-      byte b0 = this.entityData.get(DATA_FLAGS_ID);
-      if (pTamed) {
-         this.entityData.set(DATA_FLAGS_ID, (byte)(b0 | 4));
-      } else {
-         this.entityData.set(DATA_FLAGS_ID, (byte)(b0 & -5));
-      }
+/**
+* Returns whether this Entity is on the same team as the given Entity.
+*/
+public boolean isAlliedTo(Entity pEntity) {
+  if (this.isTame()) {
+     LivingEntity livingentity = this.getSummoner();
+     if (pEntity == livingentity) {
+        return true;
+     }
 
-      this.reassessTameGoals();
-   }
+     if (livingentity != null) {
+        return livingentity.isAlliedTo(pEntity);
+     }
+  }
 
-   protected void reassessTameGoals() {
-   }
+  return super.isAlliedTo(pEntity);
+}
 
-   
- @Nullable
- public UUID getOwnerUUID() {
-    return this.entityData.get(DATA_OWNERUUID_ID).orElse((UUID)null);
- }
+/**
+* Called when the mob's health reaches 0.
+*/
+public void die(DamageSource pCause) {
+  // FORGE: Super moved to top so that death message would be cancelled properly
+  net.minecraft.network.chat.Component deathMessage = this.getCombatTracker().getDeathMessage();
+  super.die(pCause);
 
- public void setOwnerUUID(@Nullable UUID p_21817_) {
-    this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(p_21817_));
- }
+  if (this.dead)
+  if (!this.level.isClientSide && this.level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getSummoner() instanceof ServerPlayer) {
+     this.getSummoner().sendMessage(deathMessage, Util.NIL_UUID);
+  }
+}
 
- public void tame(Player pPlayer) {
-    this.setTame(true);
-    this.setOwnerUUID(pPlayer.getUUID());
-    if (pPlayer instanceof ServerPlayer) {
-       CriteriaTriggers.SUMMONED_ENTITY.trigger((ServerPlayer)pPlayer, this);
-    }
- }
-
- @Nullable
- public LivingEntity getOwner() {
-    try {
-       UUID uuid = this.getOwnerUUID();
-       return uuid == null ? null : this.level.getPlayerByUUID(uuid);
-    } catch (IllegalArgumentException illegalargumentexception) {
-       return null;
-    }
- }
-
- public boolean canAttack(LivingEntity pTarget) {
-    return this.isOwnedBy(pTarget) ? false : super.canAttack(pTarget);
- }
-
- public boolean isOwnedBy(LivingEntity pEntity) {
-    return pEntity == this.getOwner();
- }
-
- public boolean wantsToAttack(LivingEntity pTarget, LivingEntity pOwner) {
-    return true;
- }
-
- public Team getTeam() {
-    if (this.isTame()) {
-       LivingEntity livingentity = this.getOwner();
-       if (livingentity != null) {
-          return livingentity.getTeam();
-       }
-    }
-
-    return super.getTeam();
- }
-
- /**
-  * Returns whether this Entity is on the same team as the given Entity.
-  */
- public boolean isAlliedTo(Entity pEntity) {
-    if (this.isTame()) {
-       LivingEntity livingentity = this.getOwner();
-       if (pEntity == livingentity) {
-          return true;
-       }
-
-       if (livingentity != null) {
-          return livingentity.isAlliedTo(pEntity);
-       }
-    }
-
-    return super.isAlliedTo(pEntity);
- }
-
- /**
-  * Called when the mob's health reaches 0.
-  */
- public void die(DamageSource pCause) {
-    // FORGE: Super moved to top so that death message would be cancelled properly
-    net.minecraft.network.chat.Component deathMessage = this.getCombatTracker().getDeathMessage();
-    super.die(pCause);
-
-    if (this.dead)
-    if (!this.level.isClientSide && this.level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayer) {
-       this.getOwner().sendMessage(deathMessage, Util.NIL_UUID);
-    }
- }
- 
-   //END generic tamed monster stuff  
+ //END generic tamed monster stuff  
 }

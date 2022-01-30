@@ -1,7 +1,5 @@
 package com.chemelia.vanillaarcana.entity.projectile;
 
-import com.chemelia.vanillaarcana.enchantments.WebEnchantment;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
@@ -11,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.fluids.FluidAttributes.Water;
 
 public class WebSnowball extends Snowball {
     private Level world;

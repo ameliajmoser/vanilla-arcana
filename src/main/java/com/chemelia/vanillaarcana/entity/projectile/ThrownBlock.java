@@ -1,7 +1,6 @@
 package com.chemelia.vanillaarcana.entity.projectile;
 
 import com.chemelia.vanillaarcana.RegistryHandler;
-import com.ibm.icu.impl.number.Properties;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -11,17 +10,12 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -32,7 +26,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -336,14 +329,6 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
             super.updateRotation();
         // }
     }
-
-    private Vec3 changeBasis(Vec3 dir, Vec3 rot) {
-        Vec3 y = dir.normalize();
-        Vec3 x = new Vec3(y.y, y.z, y.x).normalize();
-        Vec3 z = y.cross(x).normalize();
-        return x.scale(rot.x).add(y.scale(rot.y)).add(z.scale(rot.z));
-    }
-
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer) {

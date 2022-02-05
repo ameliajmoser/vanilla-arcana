@@ -20,7 +20,8 @@ import com.chemelia.vanillaarcana.entity.monster.TamedGhast;
 import com.chemelia.vanillaarcana.entity.monster.TamedSkeleton;
 import com.chemelia.vanillaarcana.entity.monster.TamedVex;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
-import com.chemelia.vanillaarcana.entity.projectile.WebSnowball;
+import com.chemelia.vanillaarcana.entity.projectile.WebProjectile;
+import com.chemelia.vanillaarcana.entity.projectile.FrostSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.ThrownBlock;
 import com.chemelia.vanillaarcana.item.WandItem;
@@ -31,6 +32,7 @@ import com.google.common.base.Supplier;
 import net.minecraft.client.renderer.entity.BlazeRenderer;
 import net.minecraft.client.renderer.entity.EndermiteRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.VexRenderer;
 import net.minecraft.client.renderer.entity.WitherSkeletonRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
@@ -39,6 +41,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -126,27 +129,26 @@ public class RegistryHandler {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, VanillaArcana.MOD_ID);
 
 
-    public static final EntityType<SyphonSnowball> SYPHON_SNOWBALL= EntityType.Builder
-        .<SyphonSnowball>of(SyphonSnowball::new, MobCategory.MISC)
-        .sized(0.25F, 0.25F)
-        .clientTrackingRange(4)
-        .updateInterval(10)
-        .build(VanillaArcana.MOD_ID + ":syphon_projectile");
-
-    public static final EntityType<WebSnowball> FROST_SNOWBALL = EntityType.Builder
-        .<WebSnowball>of(WebSnowball::new, MobCategory.MISC)
-        .sized(0.25F, 0.25F)
-        .clientTrackingRange(4)
-        .updateInterval(10)
-        .build(VanillaArcana.MOD_ID + ":frost_projectile");
-    
-
     public static final RegistryObject<EntityType<ThrownBlock>> THROWN_BLOCK = ENTITIES.register("thrown_block", () -> EntityType.Builder.<ThrownBlock>of(ThrownBlock::new, MobCategory.MISC)
         .setCustomClientFactory(ThrownBlock::new)
         .sized(0.5F, 0.5F)
         .clientTrackingRange(4)
         .updateInterval(20)
         .build(VanillaArcana.MOD_ID + ":thrown_block"));
+
+        public static final RegistryObject<EntityType<SyphonSnowball>> SYPHON_SNOWBALL = registerProjectile("syphon_snowball", SyphonSnowball::new, 0.25F, 0.25F);
+        public static final RegistryObject<EntityType<FrostSnowball>> FROST_SNOWBALL = registerProjectile("frost_snowball", FrostSnowball::new, 0.25F, 0.25F);
+        public static final RegistryObject<EntityType<WebProjectile>> WEB_PROJECTILE = registerProjectile("web_projectile", WebProjectile::new, 0.25F, 0.25F);
+
+    private static <T extends Projectile> RegistryObject<EntityType<T>> registerProjectile(String name, EntityType.EntityFactory<T> factory, float width, float height){
+        ResourceLocation location = new ResourceLocation(VanillaArcana.MOD_ID, name);
+        EntityType<T> entity = EntityType.Builder.of(factory, MobCategory.MISC)
+        .sized(width, height)
+        .clientTrackingRange(4)
+        .updateInterval(10)
+        .build(location.toString());
+        return ENTITIES.register(name, ()-> entity);
+    }
 
     public static final RegistryObject<EntityType<TamedZombie>> TAMED_ZOMBIE = createTamedMonster("tamed_zombie", TamedZombie::new, 0.6F, 1.95F);
     public static final RegistryObject<EntityType<TamedSkeleton>> TAMED_SKELETON = createTamedMonster("tamed_skeleton", TamedSkeleton::new, 0.6F, 1.99F);
@@ -193,10 +195,7 @@ public class RegistryHandler {
        event.registerEntityRenderer(TAMED_VEX.get(), VexRenderer::new);
        event.registerEntityRenderer(TAMED_GHAST.get(), BabyGhastRenderer::new);
 
-
-
-
-
+       event.registerEntityRenderer(WEB_PROJECTILE.get(), ThrownItemRenderer::new);
        event.registerEntityRenderer(THROWN_BLOCK.get(), ThrownBlockRenderer::new);
     }
 

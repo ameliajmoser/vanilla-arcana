@@ -1,44 +1,70 @@
 package com.chemelia.vanillaarcana.entity.projectile;
 
+import com.chemelia.vanillaarcana.RegistryHandler;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Snowball;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
-public class WebSnowball extends Snowball {
+public class WebProjectile extends ThrowableItemProjectile {
     private Level world;
     private int spellLevel;
+    private Boolean hasLanded = false;
 
-    public WebSnowball(EntityType<? extends Snowball> type, Level world){
+    public WebProjectile(EntityType<? extends WebProjectile> type, Level world){
         super(type, world);
     }
 
-    public WebSnowball(Level world, LivingEntity owner, int spellLevel) {
-        super(world, owner);
+    public WebProjectile(Level world, LivingEntity owner, int spellLevel) {
+        super(RegistryHandler.WEB_PROJECTILE.get(), owner, world);
         this.world = world;
         this.spellLevel = spellLevel;
     }
 
+    @Override
+    protected Item getDefaultItem() {
+        return Items.COBWEB;
+    }
+
+    @Override
     public void onHitEntity(EntityHitResult result){
+        if (hasLanded){
+            return;
+        }
         BlockPos pos = new BlockPos(result.getLocation());
         generateWebs(Direction.UP, pos);
         super.onHitEntity(result);
+        this.hasLanded = true;
+        //this.remove(RemovalReason.DISCARDED);
     }
 
+    @Override
     public void onHitBlock(BlockHitResult result){
+        if (hasLanded){
+            return;
+        }
         BlockPos pos = new BlockPos(result.getLocation());
         generateWebs(result.getDirection(), pos);
         super.onHitBlock(result);
+        this.hasLanded = true;
+        //this.remove(RemovalReason.DISCARDED);
     }
 
     private void generateWebs(Direction direction, BlockPos center){
+        if (this.world == null){
+            return;
+        }
         if (!world.isEmptyBlock(center)){
-            center.relative(direction, -1);
+            System.out.println("center is air");
+            center = center.relative(direction, -1);
         }
         switch (spellLevel) {
             case 3:

@@ -73,13 +73,17 @@ public class ThrownBlock extends ThrowableItemProjectile implements IEntityAddit
     }
 
     //client factory
-    public ThrownBlock(EntityType<ThrownBlock> type, Level world) {
+    public ThrownBlock(EntityType<? extends ThrownBlock> type, Level world) {
         super(type, world);
     }
 
     public ThrownBlock(Level world, LivingEntity thrower, BlockPos bPos){
         this(world, thrower, new ItemStack(world.getBlockState(bPos).getBlock().asItem()));
     }
+    public ThrownBlock(Level world, LivingEntity thrower, Block block){
+        this(world, thrower, new ItemStack(block.asItem()));
+    }
+    
 
     public boolean isNoPhysics(){
         if (!this.level.isClientSide()){

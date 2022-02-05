@@ -61,6 +61,7 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
    @Override
    protected void registerGoals() {
       this.goalSelector.addGoal(1, new BlazeAttackGoal(this));
+      this.goalSelector.addGoal(1, new BlazeAttackGoal(this));
       this.goalSelector.addGoal(2, new FollowSummonerGoal(this, 1.0D, 12.0F, 1.0F, true));
       this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
       this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.0F));

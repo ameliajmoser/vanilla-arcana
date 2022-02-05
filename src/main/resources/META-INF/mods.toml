@@ -31,7 +31,7 @@ displayURL="https://github.com/ameliajmoser/vanilla-arcana" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="amethyst_wand.png" #optional
 # A text field displayed in the mod UI
-credits="Agatha Lovelace and Charlotte Som for helping me learn!" #optional
+# credits="Agatha Lovelace!" #optional
 # A text field displayed in the mod UI
 authors="chemelia" #optional
 # The description text for the mod (multi line!) (#mandatory)

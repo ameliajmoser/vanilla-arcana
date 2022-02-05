@@ -123,12 +123,10 @@ public class RegistryHandler {
         .stacksTo(1)
         .tab(CreativeModeTab.TAB_TOOLS)
         .durability(128)
-        .defaultDurability(1)
     ));
 
     //Entities
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, VanillaArcana.MOD_ID);
-
 
     public static final RegistryObject<EntityType<ThrownBlock>> THROWN_BLOCK = ENTITIES.register("thrown_block", () -> EntityType.Builder.<ThrownBlock>of(ThrownBlock::new, MobCategory.MISC)
         .setCustomClientFactory(ThrownBlock::new)

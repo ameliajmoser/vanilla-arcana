@@ -1,7 +1,5 @@
 package com.chemelia.vanillaarcana.enchantments;
 
-import javax.annotation.Nullable;
-
 import com.chemelia.vanillaarcana.VanillaArcana;
 
 import net.minecraft.world.entity.EntityType;

@@ -207,7 +207,6 @@ public class TamedBlaze extends Blaze implements SummonedEntity {
 
                   if (this.attackStep > 1) {
                      // inaccuracy?
-                     // TODO: check this
                      double d4 = Math.sqrt(Math.sqrt(d0)) * 0.2D;
                      if (!this.blaze.isSilent()) {
                         this.blaze.level.levelEvent((Player) null, 1018, this.blaze.blockPosition(), 0);

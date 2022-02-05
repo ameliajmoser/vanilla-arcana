@@ -30,6 +30,8 @@
     "enchantment.vanillaarcana.web": "Web",
     "enchantment.vanillaarcana.conjuration": "Conjuration",
     "enchantment.vanillaarcana.telekinesis": "Cubikinesis",
+    "enchantment.vanillaarcana.lightning": "Lightning",
+
 
     "subtitles.vanillaarcana.item.wand.fail": "Spell failed",
     "subtitles.vanillaarcana.item.wand.cast": "Spell cast",

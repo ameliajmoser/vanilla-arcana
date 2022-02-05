@@ -7,6 +7,7 @@ import com.chemelia.vanillaarcana.enchantments.AegisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.AerothurgeEnchantment;
 import com.chemelia.vanillaarcana.enchantments.ConjurationEnchantment;
 import com.chemelia.vanillaarcana.enchantments.FrostEnchantment;
+import com.chemelia.vanillaarcana.enchantments.LightningEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WebEnchantment;
 import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
@@ -216,6 +217,8 @@ public class RegistryHandler {
     public static final RegistryObject<Enchantment> WEB = ENCHANTMENTS.register("web", WebEnchantment::new);
     public static final RegistryObject<Enchantment> CONJURATION = ENCHANTMENTS.register("conjuration", ConjurationEnchantment::new);
     public static final RegistryObject<Enchantment> TELEKINESIS = ENCHANTMENTS.register("telekinesis", TelekinesisEnchantment::new);
+    public static final RegistryObject<Enchantment> LIGHTNING = ENCHANTMENTS.register("lightning", LightningEnchantment::new);
+
     
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register
         SOUNDS.register(eventBus);

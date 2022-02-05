@@ -113,7 +113,7 @@ public class TelekinesisEnchantment extends SpellEnchantment {
         Vec3 look = user.getLookAngle();
         Vec3 pos = user.getEyePosition();
         Vec3 destination = pos.add(look.scale(RANGE*spellLevel));
-        BlockHitResult cast = user.level.clip(new ClipContext(pos, destination, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, user));
+        BlockHitResult cast = user.level.clip(new ClipContext(pos, destination, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, user));
         if (cast.getType() == Type.BLOCK){
             if (getBlockWeight(world, cast.getBlockPos()) > 3.0 * spellLevel){
                 return false;

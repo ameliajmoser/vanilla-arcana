@@ -59,7 +59,7 @@ public class WarpEnchantment extends SpellEnchantment {
                 if (spellLevel > 4){
                     destination = pos.add(look.scale(99999.0D));
                 }
-                BlockHitResult cast = user.level.clip(new ClipContext(pos, destination, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, user));
+                BlockHitResult cast = user.level.clip(new ClipContext(pos, destination, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, user));
 
                 if (cast.getType() != HitResult.Type.MISS){
                     doSpellSuccess(user, world, pos, stack, spellCost, spellLevel);

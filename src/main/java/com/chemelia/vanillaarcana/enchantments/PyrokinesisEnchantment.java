@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 public class PyrokinesisEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 7;
     private final static int SPELL_COST = 14;
-    private final static int MAX_LEVEL = 4;
+    private final static int MAX_LEVEL = 3;
     public static final String ID = VanillaArcana.MOD_ID + ":pyrokinesis";
 
     public PyrokinesisEnchantment() {

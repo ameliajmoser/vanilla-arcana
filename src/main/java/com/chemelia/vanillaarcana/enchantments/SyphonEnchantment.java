@@ -24,7 +24,7 @@ import net.minecraft.world.phys.Vec3;
 public class SyphonEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 3;
     private final static int SPELL_COST = 8;
-    private final static int MAX_LEVEL = 5;
+    private final static int MAX_LEVEL = 3;
     private final static int PROJECTILE_SPEED = 1;
     public static final String ID = VanillaArcana.MOD_ID + ":syphon";
 

@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 public class AerothurgeEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 20;
     private final static int SPELL_COST = 14;
-    private final static int MAX_LEVEL = 4;
+    private final static int MAX_LEVEL = 3;
     public static final String ID = VanillaArcana.MOD_ID + ":aerothurge";
 
     

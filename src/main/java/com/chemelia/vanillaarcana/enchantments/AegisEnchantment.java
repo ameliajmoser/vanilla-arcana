@@ -24,7 +24,7 @@ import net.minecraft.world.phys.Vec3;
 public class AegisEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 3;
     private final static int SPELL_COST = 5;
-    private final static int MAX_LEVEL = 5;
+    private final static int MAX_LEVEL = 3;
     //private final static int PROJECTILE_SPEED = 1;
     private final static int RANGE = 5;
     private final Block BLOCK = RegistryHandler.AEGIS_BLOCK.get();

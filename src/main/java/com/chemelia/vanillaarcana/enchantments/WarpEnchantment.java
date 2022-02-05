@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
 public class WarpEnchantment extends SpellEnchantment {
     private final static int SPELL_COOLDOWN = 30;
     private final static int SPELL_COST = 15;
-    private final static int MAX_LEVEL = 5;
+    private final static int MAX_LEVEL = 3;
     private final static int RANGE = 20;
     protected final Random random = new Random();
     public static final String ID = VanillaArcana.MOD_ID + ":warp";

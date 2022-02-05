@@ -32,7 +32,7 @@ public class AegisEnchantment extends SpellEnchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":aegis";
 
     public AegisEnchantment() {
-        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
+        super(Rarity.COMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
     @Override

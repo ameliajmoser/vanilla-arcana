@@ -43,7 +43,7 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
             int spellLevel = EnchantmentHelper.getItemEnchantmentLevel(this, stack);
             Vec3 look = user.getLookAngle();
             Vec3 pos = user.getEyePosition().add(look.scale(0.9));
-            Vec3 velocity = look.scale(0.3);
+            Vec3 velocity = look.scale(0.2);
             Fireball fireball = new SmallFireball(world, user, 0,0,0);
             switch (spellLevel){
                 case 0:
@@ -51,7 +51,6 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
                 case 1:
                     break;
                 case 2:
-                    velocity = look.scale(0.2);
                     //last parameter is explosionpower
                     fireball = new LargeFireball(world, user, 0,0,0, 1);
                     break;

@@ -32,7 +32,7 @@ public class WarpEnchantment extends SpellEnchantment {
     public static final String ID = VanillaArcana.MOD_ID + ":warp";
 
     public WarpEnchantment() {
-        super(Rarity.RARE, SPELL_COOLDOWN, SPELL_COST);
+        super(Rarity.UNCOMMON, SPELL_COOLDOWN, SPELL_COST);
     }
 
     @Override

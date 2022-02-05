@@ -64,7 +64,7 @@ public class WebProjectile extends ThrowableItemProjectile {
         }
         if (!world.isEmptyBlock(center)){
             System.out.println("center is air");
-            center = center.relative(direction, -1);
+            center = center.relative(direction, 1);
         }
         switch (spellLevel) {
             case 3:

@@ -43,8 +43,6 @@ public class VanillaArcana
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
-
-        ItemBlockRenderTypes.setRenderLayer(RegistryHandler.AEGIS_BLOCK.get(), RenderType.translucent());
     }
 
     /*

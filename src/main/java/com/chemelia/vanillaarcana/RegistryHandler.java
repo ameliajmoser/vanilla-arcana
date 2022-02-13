@@ -11,6 +11,7 @@ import com.chemelia.vanillaarcana.enchantments.LightningEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WebEnchantment;
 import com.chemelia.vanillaarcana.enchantments.NecromancyEnchantment;
 import com.chemelia.vanillaarcana.enchantments.PyrokinesisEnchantment;
+import com.chemelia.vanillaarcana.enchantments.SparkEnchantment;
 import com.chemelia.vanillaarcana.enchantments.SyphonEnchantment;
 import com.chemelia.vanillaarcana.enchantments.TelekinesisEnchantment;
 import com.chemelia.vanillaarcana.enchantments.WarpEnchantment;
@@ -23,6 +24,7 @@ import com.chemelia.vanillaarcana.entity.monster.TamedVex;
 import com.chemelia.vanillaarcana.entity.monster.TamedWitherSkeleton;
 import com.chemelia.vanillaarcana.entity.projectile.WebProjectile;
 import com.chemelia.vanillaarcana.entity.projectile.FrostSnowball;
+import com.chemelia.vanillaarcana.entity.projectile.LightningProjectile;
 import com.chemelia.vanillaarcana.entity.projectile.SyphonSnowball;
 import com.chemelia.vanillaarcana.entity.projectile.ThrownBlock;
 import com.chemelia.vanillaarcana.item.WandItem;
@@ -32,6 +34,7 @@ import com.google.common.base.Supplier;
 
 import net.minecraft.client.renderer.entity.BlazeRenderer;
 import net.minecraft.client.renderer.entity.EndermiteRenderer;
+import net.minecraft.client.renderer.entity.LlamaSpitRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.VexRenderer;
@@ -138,6 +141,7 @@ public class RegistryHandler {
         public static final RegistryObject<EntityType<SyphonSnowball>> SYPHON_SNOWBALL = registerProjectile("syphon_snowball", SyphonSnowball::new, 0.25F, 0.25F);
         public static final RegistryObject<EntityType<FrostSnowball>> FROST_SNOWBALL = registerProjectile("frost_snowball", FrostSnowball::new, 0.25F, 0.25F);
         public static final RegistryObject<EntityType<WebProjectile>> WEB_PROJECTILE = registerProjectile("web_projectile", WebProjectile::new, 0.25F, 0.25F);
+        public static final RegistryObject<EntityType<LightningProjectile>> LIGHTNING_PROJECTILE = registerProjectile("lightning_projectile", LightningProjectile::new, 0.25F, 0.25F);
 
     private static <T extends Projectile> RegistryObject<EntityType<T>> registerProjectile(String name, EntityType.EntityFactory<T> factory, float width, float height){
         ResourceLocation location = new ResourceLocation(VanillaArcana.MOD_ID, name);
@@ -195,6 +199,7 @@ public class RegistryHandler {
        event.registerEntityRenderer(TAMED_GHAST.get(), BabyGhastRenderer::new);
 
        event.registerEntityRenderer(WEB_PROJECTILE.get(), ThrownItemRenderer::new);
+       event.registerEntityRenderer(LIGHTNING_PROJECTILE.get(), LlamaSpitRenderer::new);
        event.registerEntityRenderer(THROWN_BLOCK.get(), ThrownBlockRenderer::new);
     }
 
@@ -216,6 +221,8 @@ public class RegistryHandler {
     public static final RegistryObject<Enchantment> CONJURATION = ENCHANTMENTS.register("conjuration", ConjurationEnchantment::new);
     public static final RegistryObject<Enchantment> TELEKINESIS = ENCHANTMENTS.register("telekinesis", TelekinesisEnchantment::new);
     public static final RegistryObject<Enchantment> LIGHTNING = ENCHANTMENTS.register("lightning", LightningEnchantment::new);
+    //public static final RegistryObject<Enchantment> SPARK = ENCHANTMENTS.register("spark", SparkEnchantment::new);
+
 
     
     public static void register(IEventBus eventBus) { //Add the list of our items to the deferred register

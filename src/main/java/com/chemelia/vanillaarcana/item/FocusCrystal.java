@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -56,9 +57,8 @@ public class FocusCrystal extends Item {
         return stack;
     }
 
-
     private void crystalExplosion(LivingEntity user){
-        user.level.explode(null, user.getX(), user.getY(), user.getZ(), 7.0F, Explosion.BlockInteraction.DESTROY);
+        user.level.explode(null, user.getX(), user.getY(), user.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
     }
 
     private void produceOrb(LivingEntity user){

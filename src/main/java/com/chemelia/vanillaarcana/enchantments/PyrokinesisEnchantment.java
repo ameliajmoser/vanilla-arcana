@@ -5,6 +5,7 @@ import com.chemelia.vanillaarcana.VanillaArcana;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.SmallFireball;
@@ -63,20 +64,20 @@ public class PyrokinesisEnchantment extends SpellEnchantment {
                     break;  
                 }
                 fireball.setPos(pos.x, pos.y, pos.z);
-                fireball.xPower = velocity.x;
-                fireball.yPower = velocity.y;
-                fireball.zPower = velocity.z; 
+                fireball.setDeltaMovement(velocity); 
                 world.addFreshEntity(fireball);
                 return true;
         } else return false;
     }
 
     //Increases the speed of any fireballs reflected - like lethal league for wizards!
-    //TODO: check if this actually works lol
     @Override
     public void doPostAttack(LivingEntity attacker, Entity target, int spellLevel){
         if (target instanceof Fireball){
-            target.setDeltaMovement(target.getDeltaMovement().scale(1.2 * spellLevel));
+            target.setDeltaMovement(target.getDeltaMovement().scale(1.1 * spellLevel));
+            if (target instanceof LargeFireball){
+                //future: increase explosion radius? may require access transformer
+            }
         }
     }
 }

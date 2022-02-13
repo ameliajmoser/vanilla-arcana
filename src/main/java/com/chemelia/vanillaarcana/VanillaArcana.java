@@ -3,13 +3,20 @@ package com.chemelia.vanillaarcana;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.system.CallbackI.V;
 
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -43,6 +50,14 @@ public class VanillaArcana
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+    }
+
+    @Mod.EventBusSubscriber(bus = Bus.MOD, value = Dist.CLIENT, modid = MOD_ID)
+    public class clientSetup {
+        @SubscribeEvent
+        public static void setup(final FMLClientSetupEvent event){
+            ItemBlockRenderTypes.setRenderLayer(RegistryHandler.AEGIS_BLOCK.get(), RenderType.translucent());
+        }
     }
 
     /*
